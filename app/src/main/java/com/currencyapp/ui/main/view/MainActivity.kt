@@ -1,0 +1,41 @@
+package com.currencyapp.ui.main.view
+
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
+import com.currencyapp.R
+import com.currencyapp.dto.CurrencyResponse
+
+class MainActivity : AppCompatActivity(), MainView {
+
+    val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+    }
+
+    override fun onDataLoadedSuccess(currencyList: List<CurrencyResponse>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onDataLoadedFailure(error: Throwable) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun showProgress() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun hideProgress() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onCashFieldClicked() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onCashFieldChanged() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
