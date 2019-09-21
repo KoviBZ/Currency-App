@@ -1,11 +1,14 @@
 package com.currencyapp.network
 
 import com.currencyapp.dto.CurrencyResponse
-import retrofit2.Call
+import io.reactivex.Single
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface CurrencyApi {
 
-    @GET("/files/bought_cds.json")
-    fun getCurrencies(): Call<CurrencyResponse>
+    @GET("latest")
+    fun getCurrencies(
+        @Query("base") base: String
+    ): Single<CurrencyResponse>
 }
