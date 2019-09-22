@@ -12,17 +12,8 @@ import com.currencyapp.utils.CountryConverter
 
 class CurrencyAdapter(
     private val context: Context,
-    map: Map<String, Double>
-) : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
-
     private val itemsList: List<RateDto>
-
-    init {
-        this.itemsList = ArrayList(map.size)
-        map.iterator().forEach {
-            itemsList.add(RateDto(it.key, it.value))
-        }
-    }
+) : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         return CurrencyViewHolder(

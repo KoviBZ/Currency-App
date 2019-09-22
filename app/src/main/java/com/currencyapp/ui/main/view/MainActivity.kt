@@ -1,25 +1,24 @@
 package com.currencyapp.ui.main.view
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.dto.CurrencyAdapter
-import com.currencyapp.dto.CurrencyResponse
+import com.currencyapp.dto.RateDto
 import com.currencyapp.network.di.NetworkModule
 import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.model.MainModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.internal.schedulers.IoScheduler
+import com.currencyapp.ui.main.presenter.MainPresenter
+import com.currencyapp.utils.mapper.RatesToRateDtosMapper
 
 
 class MainActivity : AppCompatActivity(), MainView {
 
 //    @Inject
-//    lateinit var presenter: MainPresenter
+    lateinit var presenter: MainPresenter
 
     val model = MainModel(NetworkModule.provideCurrencyApi())
 
@@ -33,16 +32,9 @@ class MainActivity : AppCompatActivity(), MainView {
 
         CurrencyApplication.getApplicationComponent().inject(this)
 
-        model.retrieveCurrencyResponse("EUR")
-            .subscribeOn(IoScheduler())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess { response ->
-                recyclerView.adapter = CurrencyAdapter(this, response.rates)
-            }
-            .doOnError {
-                Log.e("errorinmodel", it.message)
-            }
-            .subscribe()
+        presenter = MainPresenter(model, RatesToRateDtosMapper())
+        presenter.attachView(this)
+        presenter.retrieveCurrencyResponse("EUR")
     }
 
     override fun onDestroy() {
@@ -50,8 +42,8 @@ class MainActivity : AppCompatActivity(), MainView {
         super.onDestroy()
     }
 
-    override fun onDataLoadedSuccess(currencyList: List<CurrencyResponse>) {
-        Toast.makeText(applicationContext, "worked!", Toast.LENGTH_SHORT).show()
+    override fun onDataLoadedSuccess(currencyList: List<RateDto>) {
+        recyclerView.adapter = CurrencyAdapter(this, currencyList)
     }
 
     override fun onDataLoadedFailure(error: Throwable) {
