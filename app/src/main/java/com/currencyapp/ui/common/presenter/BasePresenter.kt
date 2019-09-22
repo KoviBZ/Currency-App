@@ -6,7 +6,7 @@ open class BasePresenter<BaseView> {
 
     protected var view: BaseView? = null
 
-    private lateinit var subscriptions: CompositeDisposable
+    protected lateinit var subscriptions: CompositeDisposable
 
     fun attachView(view: BaseView) {
         this.view = view
@@ -17,7 +17,7 @@ open class BasePresenter<BaseView> {
         subscriptions.clear()
     }
 
-//    protected fun executeOn(
+    //    protected fun executeOn(
 //        scheduler: Scheduler,
 //        observable: Observable<RESPONSE>,
 //        onNextAction: Consumer<in RESPONSE>,
@@ -34,15 +34,17 @@ open class BasePresenter<BaseView> {
 //
 //    protected fun executeOn(
 //        scheduler: Scheduler,
-//        single: Single<RESPONSE>,
+//        single: Single<in RESPONSE>,
 //        onSuccessAction: Consumer<in RESPONSE>,
 //        onErrorAction: Consumer<in Throwable>
 //    ) {
-//        single
+//        val disposable = single
 //            .subscribeOn(scheduler)
 //            .doOnSuccess(onSuccessAction)
 //            .doOnError(onErrorAction)
 //            .subscribe()
+//
+//        subscriptions.add(disposable)
 //    }
 //
 //    protected fun executeOn(
@@ -57,4 +59,12 @@ open class BasePresenter<BaseView> {
 //            .doOnError(onErrorAction)
 //            .subscribe()
 //    }
+
+    fun clearSubscriptions() {
+        subscriptions.clear()
+    }
+
+    fun disposeSubscriptions() {
+        subscriptions.dispose()
+    }
 }

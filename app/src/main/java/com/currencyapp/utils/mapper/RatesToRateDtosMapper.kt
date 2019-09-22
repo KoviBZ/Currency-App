@@ -1,6 +1,6 @@
 package com.currencyapp.utils.mapper
 
-import com.currencyapp.dto.RateDto
+import com.currencyapp.localrepo.RateDto
 
 class RatesToRateDtosMapper: Mapper<Map.Entry<String, Double>, RateDto> {
 

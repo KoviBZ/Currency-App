@@ -10,11 +10,13 @@ class CountryConverter {
         //STUB
         @DrawableRes
         fun getImageForCountry(code: String): Int {
-            return R.drawable.ic_launcher_foreground
+            return when(code) {
+                "EUR" -> R.color.tmpEUR
+                "USD" -> R.color.tmpUSD
+                "GBP" -> R.color.tmpGBP
+                "PLN" -> R.color.tmpPLN
+                else -> android.R.color.black
+            }
         }
-
-//        fun convertRatesToRateDtos(rates: LinkedHashMap<String, Double>) : List<RateDto> {
-//            val finalList
-//        }
     }
 }

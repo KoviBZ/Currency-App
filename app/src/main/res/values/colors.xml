@@ -3,4 +3,9 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="tmpEUR">#0000FF</color>
+    <color name="tmpUSD">#FF0000</color>
+    <color name="tmpGBP">#8800FF</color>
+    <color name="tmpPLN">#FF00FF</color>
 </resources>

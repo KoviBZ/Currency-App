@@ -1,6 +1,6 @@
 package com.currencyapp.ui.main.di
 
-import com.currencyapp.dto.RateDto
+import com.currencyapp.localrepo.RateDto
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.di.NetworkModule
 import com.currencyapp.ui.main.model.MainModel

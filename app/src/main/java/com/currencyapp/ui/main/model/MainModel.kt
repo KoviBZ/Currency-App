@@ -1,6 +1,6 @@
 package com.currencyapp.ui.main.model
 
-import com.currencyapp.dto.CurrencyResponse
+import com.currencyapp.localrepo.CurrencyResponse
 import com.currencyapp.network.CurrencyApi
 import io.reactivex.Single
 
