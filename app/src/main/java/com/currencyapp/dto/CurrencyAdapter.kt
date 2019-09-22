@@ -12,8 +12,17 @@ import com.currencyapp.utils.CountryConverter
 
 class CurrencyAdapter(
     private val context: Context,
-    private val items: List<RateDto>
+    map: Map<String, Double>
 ) : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
+
+    private val itemsList: List<RateDto>
+
+    init {
+        this.itemsList = ArrayList(map.size)
+        map.iterator().forEach {
+            itemsList.add(RateDto(it.key, it.value))
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         return CurrencyViewHolder(
@@ -27,10 +36,10 @@ class CurrencyAdapter(
         )
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = itemsList.size
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(itemsList[position])
     }
 
     class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -38,10 +47,10 @@ class CurrencyAdapter(
         private val currencyValueEditText by lazy { view.findViewById<EditText>(R.id.currency_value_et) }
 
         fun bind(rateDto: RateDto) {
-            val imageRes = CountryConverter.getImageForCountry(rateDto.code)
+            val imageRes = CountryConverter.getImageForCountry(rateDto.key)
             countryImageView.setImageResource(imageRes)
 
-            currencyValueEditText.setText("asd")
+            currencyValueEditText.setText(rateDto.value.toString())
         }
     }
 }

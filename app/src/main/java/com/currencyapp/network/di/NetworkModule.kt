@@ -3,9 +3,10 @@ package com.currencyapp.network.di
 import com.currencyapp.network.CurrencyApi
 import dagger.Module
 import dagger.Provides
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.Retrofit
 import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 object NetworkModule {
@@ -19,6 +20,7 @@ object NetworkModule {
         val retrofit = Retrofit.Builder()
             .baseUrl(HOST)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(httpClient.build())
             .build()
 

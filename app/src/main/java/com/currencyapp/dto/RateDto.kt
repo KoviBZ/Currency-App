@@ -1,6 +1,6 @@
 package com.currencyapp.dto
 
 data class RateDto(
-    val code: String,
-    val multiplier: Double
+    val key: String,
+    val value: Double
 )

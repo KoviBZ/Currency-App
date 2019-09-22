@@ -12,5 +12,9 @@ class CountryConverter {
         fun getImageForCountry(code: String): Int {
             return R.drawable.ic_launcher_foreground
         }
+
+//        fun convertRatesToRateDtos(rates: LinkedHashMap<String, Double>) : List<RateDto> {
+//            val finalList
+//        }
     }
 }
