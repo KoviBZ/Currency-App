@@ -15,7 +15,8 @@ import java.util.*
 
 class CurrencyAdapter(
     private val context: Context,
-    private val itemsList: ArrayList<RateDto>
+    private val itemsList: ArrayList<RateDto>,
+    private val textWatcher: TextWatcher
 ) : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
@@ -40,19 +41,21 @@ class CurrencyAdapter(
                     Collections.swap(itemsList, 0, position) //TODO check positions
                     notifyItemMoved(0, position)
                 }
-            })
+            },
+            textWatcher)
     }
 
     class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val countryImageView by lazy { view.findViewById<ImageView>(R.id.country_iv) }
         private val currencyValueEditText by lazy { view.findViewById<EditText>(R.id.currency_value_et) }
 
-        fun bind(rateDto: RateDto, focusListener: View.OnFocusChangeListener) {
+        fun bind(rateDto: RateDto, focusListener: View.OnFocusChangeListener, textWatcher: TextWatcher) {
             val imageRes = CountryConverter.getImageForCountry(rateDto.key)
             countryImageView.setImageResource(imageRes)
 
             currencyValueEditText.setText(rateDto.value.toString())
             currencyValueEditText.onFocusChangeListener = focusListener
+            currencyValueEditText.addTextChangedListener(textWatcher)
         }
     }
 }

@@ -15,6 +15,8 @@ class CountryConverter {
                 "USD" -> R.color.tmpUSD
                 "GBP" -> R.color.tmpGBP
                 "PLN" -> R.color.tmpPLN
+                "AUD" -> R.color.tmpAUD
+                "CHF" -> R.color.tmpCHF
                 else -> android.R.color.black
             }
         }

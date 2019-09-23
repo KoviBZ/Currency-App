@@ -1,6 +1,8 @@
 package com.currencyapp.ui.main.view
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
@@ -13,6 +15,7 @@ import com.currencyapp.localrepo.CurrencyAdapter
 import com.currencyapp.localrepo.RateDto
 import com.currencyapp.network.di.NetworkModule
 import com.currencyapp.ui.app.CurrencyApplication
+import com.currencyapp.ui.main.di.MainComponent
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.presenter.MainPresenter
 import com.currencyapp.utils.mapper.RatesToRateDtosMapper
@@ -23,7 +26,7 @@ class MainActivity : AppCompatActivity(), MainView {
 //    @Inject
     lateinit var presenter: MainPresenter
 
-    val model = MainModel(NetworkModule.provideCurrencyApi())
+    val PREFS_FILENAME = "com.teamtreehouse.colorsarefun.prefs"
 
     private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
     private val progressBar: ProgressBar by lazy { findViewById<ProgressBar>(R.id.progress_bar) }
@@ -35,6 +38,10 @@ class MainActivity : AppCompatActivity(), MainView {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         CurrencyApplication.getApplicationComponent().inject(this)
+
+        val prefs = getSharedPreferences(PREFS_FILENAME, 0)
+
+        val model = MainModel(NetworkModule.provideCurrencyApi(), prefs)
 
         presenter = MainPresenter(model, RatesToRateDtosMapper())
         presenter.attachView(this)
@@ -59,7 +66,21 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onDataLoadedSuccess(currencyList: ArrayList<RateDto>) {
         recyclerView.adapter = CurrencyAdapter(
             this,
-            currencyList
+            currencyList,
+            object: TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    presenter.onTextChanged(s.toString())
+                }
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                }
+
+            }
         )
     }
 
@@ -85,7 +106,4 @@ class MainActivity : AppCompatActivity(), MainView {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    fun providePresenter() {
-
-    }
 }

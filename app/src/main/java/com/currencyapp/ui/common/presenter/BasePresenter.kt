@@ -1,5 +1,8 @@
 package com.currencyapp.ui.common.presenter
 
+import io.reactivex.Scheduler
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
 open class BasePresenter<BaseView> {
@@ -17,48 +20,15 @@ open class BasePresenter<BaseView> {
         subscriptions.clear()
     }
 
-    //    protected fun executeOn(
-//        scheduler: Scheduler,
-//        observable: Observable<RESPONSE>,
-//        onNextAction: Consumer<in RESPONSE>,
-//        onErrorAction: Consumer<in Throwable>,
-//        onCompleteAction: Action
-//    ) {
-//        observable
-//            .subscribeOn(scheduler)
-//            .doOnNext(onNextAction)
-//            .doOnComplete(onCompleteAction)
-//            .doOnError(onErrorAction)
-//            .subscribe()
-//    }
-//
-//    protected fun executeOn(
-//        scheduler: Scheduler,
-//        single: Single<in RESPONSE>,
-//        onSuccessAction: Consumer<in RESPONSE>,
-//        onErrorAction: Consumer<in Throwable>
-//    ) {
-//        val disposable = single
-//            .subscribeOn(scheduler)
-//            .doOnSuccess(onSuccessAction)
-//            .doOnError(onErrorAction)
-//            .subscribe()
-//
-//        subscriptions.add(disposable)
-//    }
-//
-//    protected fun executeOn(
-//        scheduler: Scheduler,
-//        completable: Completable,
-//        onCompleteAction: Action,
-//        onErrorAction: Consumer<Throwable>
-//    ) {
-//        completable
-//            .subscribeOn(scheduler)
-//            .doOnComplete(onCompleteAction)
-//            .doOnError(onErrorAction)
-//            .subscribe()
-//    }
+    fun <RESPONSE> Single<RESPONSE>.applySchedulers(
+        scheduler: Scheduler
+    ): Single<RESPONSE> {
+        return this
+            .subscribeOn(scheduler)
+            .observeOn(AndroidSchedulers.mainThread())
+
+        //subscriptions.add(disposable)
+    }
 
     fun clearSubscriptions() {
         subscriptions.clear()

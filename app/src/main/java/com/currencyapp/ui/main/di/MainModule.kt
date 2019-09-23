@@ -1,5 +1,7 @@
 package com.currencyapp.ui.main.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.currencyapp.localrepo.RateDto
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.di.NetworkModule
@@ -21,8 +23,10 @@ object MainModule {
         MainPresenter(model, mapper)
 
     @Provides
-    fun provideMainModel(currencyApi: CurrencyApi): MainModel =
-        MainModel(currencyApi)
+    fun provideMainModel(
+        currencyApi: CurrencyApi
+    ): MainModel =
+        MainModel(currencyApi, null)
 
     @Provides
     fun provideRatesToRateDtosMapper(): Mapper<Map.Entry<String, Double>, RateDto> =
