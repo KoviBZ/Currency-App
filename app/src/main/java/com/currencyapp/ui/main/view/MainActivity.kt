@@ -12,21 +12,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.localrepo.CurrencyAdapter
+import com.currencyapp.localrepo.OnItemClickListener
 import com.currencyapp.localrepo.RateDto
 import com.currencyapp.network.di.NetworkModule
 import com.currencyapp.ui.app.CurrencyApplication
-import com.currencyapp.ui.main.di.MainComponent
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.presenter.MainPresenter
 import com.currencyapp.utils.mapper.RatesToRateDtosMapper
 
+class MainActivity : AppCompatActivity(), MainView, OnItemClickListener {
 
-class MainActivity : AppCompatActivity(), MainView {
+    //    @Inject
+    override lateinit var presenter: MainPresenter
 
-//    @Inject
-    lateinit var presenter: MainPresenter
-
-    val PREFS_FILENAME = "com.teamtreehouse.colorsarefun.prefs"
+    private val PREFS_FILENAME = "com.currencyapp.prefs"
 
     private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
     private val progressBar: ProgressBar by lazy { findViewById<ProgressBar>(R.id.progress_bar) }
@@ -41,11 +40,11 @@ class MainActivity : AppCompatActivity(), MainView {
 
         val prefs = getSharedPreferences(PREFS_FILENAME, 0)
 
-        val model = MainModel(NetworkModule.provideCurrencyApi(), prefs)
+        val model = MainModel(NetworkModule.provideCurrencyApi(), prefs, RatesToRateDtosMapper())
 
-        presenter = MainPresenter(model, RatesToRateDtosMapper())
+        presenter = MainPresenter(model)
         presenter.attachView(this)
-        presenter.retrieveCurrencyResponse("EUR")
+        presenter.retrieveCurrencyResponse()
     }
 
 //    override fun onStart() {
@@ -67,21 +66,33 @@ class MainActivity : AppCompatActivity(), MainView {
         recyclerView.adapter = CurrencyAdapter(
             this,
             currencyList,
-            object: TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                    presenter.onTextChanged(s.toString())
-                }
-
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
+            this,
+            object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                    //no-op
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    presenter.onTextChanged(s.toString())
+                }
 
+                override fun afterTextChanged(s: Editable?) {
+                    //no-op
                 }
 
             }
         )
+
+        recyclerView.adapter
+    }
+
+    override fun onItemClicked(rateDto: RateDto) {
+        presenter.onFieldClicked(rateDto)
     }
 
     override fun onDataLoadedFailure(error: Throwable) {

@@ -1,16 +1,24 @@
 package com.currencyapp.ui.app.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class ApplicationModule(private var context: Context) {
 
+    private val PREFS_FILENAME = "com.currencyapp.prefs"
+
     @Provides
-    @Singleton
     fun provideContext(): Context {
         return context
+    }
+
+    @Provides
+    fun provideSharedPreferences(
+        context: Context
+    ): SharedPreferences {
+        return context.getSharedPreferences(PREFS_FILENAME, 0)
     }
 }

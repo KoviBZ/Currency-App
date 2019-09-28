@@ -1,4 +1,5 @@
 <resources>
     <dimen name="row_height">72dp</dimen>
     <dimen name="row_image_size">40dp</dimen>
+    <dimen name="row_edit_text_width">90dp</dimen>
 </resources>

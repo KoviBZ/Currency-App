@@ -1,6 +1,8 @@
 package com.currencyapp.ui.common.view
 
-interface BaseView {
+interface BaseView<BasePresenter> {
+
+    val presenter: BasePresenter
 
     fun showProgress()
 
