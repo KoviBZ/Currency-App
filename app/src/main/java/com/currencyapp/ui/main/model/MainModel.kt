@@ -1,16 +1,13 @@
 package com.currencyapp.ui.main.model
 
 import android.content.SharedPreferences
-import com.currencyapp.localrepo.CurrencyResponse
 import com.currencyapp.localrepo.RateDto
+import com.currencyapp.localrepo.RateDtoList
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.utils.mapper.Mapper
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.subjects.BehaviorSubject
-import java.util.concurrent.TimeUnit
 import com.google.gson.Gson
+import io.reactivex.Single
+import javax.inject.Inject
 
 class MainModel(
     private val currencyApi: CurrencyApi,
@@ -24,13 +21,9 @@ class MainModel(
     val MULTIPLIER_JSON = "MULTIPLIER_JSON"
     val BASE_CURRENCY_JSON = "BASE_CURRENCY_JSON"
 
-    val subject: BehaviorSubject<CurrencyResponse> = BehaviorSubject.create()
-
     fun retrieveCurrencyResponse(): Single<ArrayList<RateDto>> {
         return currencyApi.getCurrencies(tempGetBaseCurrency())
             .map { response ->
-                tempSaveResponse(response)
-
                 val list = ArrayList<RateDto>()
                 list.add(RateDto(tempGetBaseCurrency(), tmpMultiplier))
 
@@ -38,6 +31,8 @@ class MainModel(
                     list.add(mapper.mapWithMultiplier(it, tmpMultiplier))
                 }
 
+                tempSaveResponse(list)
+//                subject.onNext(list)
                 list
             }
     }
@@ -62,15 +57,15 @@ class MainModel(
         return prefs.getString(BASE_CURRENCY_JSON, "EUR") ?: "EUR"
     }
 
-    fun tempSaveResponse(response: CurrencyResponse) {
+    fun tempSaveResponse(response: ArrayList<RateDto>) {
         val gson = Gson()
         val json = gson.toJson(response)
         prefs.edit()?.putString(RESPONSE_JSON, json)?.apply()
     }
 
-    fun tempGetResponse(): CurrencyResponse {
+    fun tempGetResponse(): ArrayList<RateDto> {
         val gson = Gson()
         val jsonString = prefs.getString(RESPONSE_JSON, "")
-        return gson.fromJson(jsonString, CurrencyResponse::class.java)
+        return gson.fromJson(jsonString, RateDtoList::class.java)
     }
 }

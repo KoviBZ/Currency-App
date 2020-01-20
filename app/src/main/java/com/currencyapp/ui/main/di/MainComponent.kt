@@ -1,15 +1,12 @@
 package com.currencyapp.ui.main.di
 
-import com.currencyapp.ui.app.di.ApplicationComponent
 import com.currencyapp.ui.main.view.MainActivity
 import dagger.Component
+import dagger.Subcomponent
 
-@Component(modules = [
-    MainModule::class
-], dependencies = [
-    ApplicationComponent::class
-])
+@Subcomponent(modules = [MainModule::class])
 interface MainComponent {
 
+    //inject
     fun inject(mainActivity: MainActivity)
 }

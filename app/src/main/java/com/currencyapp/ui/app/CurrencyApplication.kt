@@ -2,6 +2,7 @@ package com.currencyapp.ui.app
 
 import android.app.Application
 import com.currencyapp.ui.app.di.ApplicationComponent
+import com.currencyapp.ui.app.di.ApplicationModule
 import com.currencyapp.ui.app.di.DaggerApplicationComponent
 
 class CurrencyApplication : Application() {
@@ -13,8 +14,8 @@ class CurrencyApplication : Application() {
     }
 
     private fun buildComponent(): ApplicationComponent {
-        return DaggerApplicationComponent
-            .builder()
+        return DaggerApplicationComponent.builder()
+            .applicationModule(ApplicationModule(this))
             .build()
     }
 

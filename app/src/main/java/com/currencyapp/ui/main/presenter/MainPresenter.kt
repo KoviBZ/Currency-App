@@ -6,10 +6,11 @@ import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import io.reactivex.internal.schedulers.IoScheduler
 import java.text.DecimalFormat
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class MainPresenter(
-    private val model: MainModel
-) : BasePresenter<MainView>() {
+class MainPresenter(private var model: MainModel) :
+    BasePresenter<MainView>() {
 
     fun retrieveCurrencyResponse() {
         val disposable =
@@ -21,8 +22,8 @@ class MainPresenter(
                 .doOnError { throwable ->
                     failureAction(throwable)
                 }
-//                .delay(2, TimeUnit.SECONDS)
-//                .repeat()
+                .delay(2, TimeUnit.SECONDS)
+                .repeat()
                 .subscribe()
 
         subscriptions.add(disposable)
@@ -32,7 +33,7 @@ class MainPresenter(
         val multiplier = DecimalFormat.getInstance().parse(afterChangeText).toDouble()
         model.tmpMultiplier = multiplier
 
-        retrieveCurrencyResponse()
+        //model.retrieveCurrencyResponse()
     }
 
     fun onFieldClicked(rateDto: RateDto) {
@@ -42,11 +43,11 @@ class MainPresenter(
 
     private fun successAction(response: ArrayList<RateDto>) {
         view?.onDataLoadedSuccess(response)
-        view?.hideProgress()
+//        view?.hideProgress()
     }
 
     private fun failureAction(throwable: Throwable) {
         view?.onDataLoadedFailure(throwable)
-        view?.hideProgress()
+//        view?.hideProgress()
     }
 }

@@ -9,7 +9,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
-object NetworkModule {
+class NetworkModule {
 
     val HOST = "https://revolut.duckdns.org/"
 

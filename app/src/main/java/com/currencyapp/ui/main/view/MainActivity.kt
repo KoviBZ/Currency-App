@@ -14,18 +14,15 @@ import com.currencyapp.R
 import com.currencyapp.localrepo.CurrencyAdapter
 import com.currencyapp.localrepo.OnItemClickListener
 import com.currencyapp.localrepo.RateDto
-import com.currencyapp.network.di.NetworkModule
 import com.currencyapp.ui.app.CurrencyApplication
-import com.currencyapp.ui.main.model.MainModel
+import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
-import com.currencyapp.utils.mapper.RatesToRateDtosMapper
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainView, OnItemClickListener {
 
-    //    @Inject
+    @Inject
     override lateinit var presenter: MainPresenter
-
-    private val PREFS_FILENAME = "com.currencyapp.prefs"
 
     private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
     private val progressBar: ProgressBar by lazy { findViewById<ProgressBar>(R.id.progress_bar) }
@@ -34,15 +31,12 @@ class MainActivity : AppCompatActivity(), MainView, OnItemClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val appComponent = CurrencyApplication.getApplicationComponent()
+        val mainComponent = appComponent.plusMainComponent(MainModule())
+        mainComponent.inject(this)
+
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        CurrencyApplication.getApplicationComponent().inject(this)
-
-        val prefs = getSharedPreferences(PREFS_FILENAME, 0)
-
-        val model = MainModel(NetworkModule.provideCurrencyApi(), prefs, RatesToRateDtosMapper())
-
-        presenter = MainPresenter(model)
         presenter.attachView(this)
         presenter.retrieveCurrencyResponse()
     }
