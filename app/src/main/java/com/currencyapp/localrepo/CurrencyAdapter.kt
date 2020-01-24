@@ -10,7 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
-import com.currencyapp.utils.CountryConverter
+import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
 import java.util.*
 
@@ -48,8 +48,10 @@ class CurrencyAdapter(
     }
 
     class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         private val countryImageView by lazy { view.findViewById<ImageView>(R.id.country_iv) }
-        private val countryTextView by lazy { view.findViewById<TextView>(R.id.country_tv) }
+        private val currencyCodeTextView by lazy { view.findViewById<TextView>(R.id.currency_code_tv) }
+        private val currencyNameTextView by lazy { view.findViewById<TextView>(R.id.currency_name_tv) }
         private val currencyValueEditText by lazy { view.findViewById<EditText>(R.id.currency_value_et) }
 
         fun bind(
@@ -58,10 +60,12 @@ class CurrencyAdapter(
             onClickListener: View.OnClickListener,
             textWatcher: TextWatcher
         ) {
-            val imageRes = CountryConverter.getImageForCountry(rateDto.key)
-            countryImageView.setImageResource(imageRes)
+            val currencyObj = ExtendedCurrency.getCurrencyByISO(rateDto.key)
+            countryImageView.setImageResource(currencyObj.flag)
 
-            countryTextView.text = rateDto.key
+            currencyCodeTextView.text = rateDto.key
+
+            currencyNameTextView.text = currencyObj.name
 
             val formatter = DecimalFormat("#.00")
             currencyValueEditText.setText(formatter.format(rateDto.value))

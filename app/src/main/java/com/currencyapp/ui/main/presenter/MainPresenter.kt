@@ -23,7 +23,7 @@ class MainPresenter(private var model: MainModel) :
                     failureAction(throwable)
                 }
                 .delay(2, TimeUnit.SECONDS)
-                .repeat()
+//                .repeat()
                 .subscribe()
 
         subscriptions.add(disposable)
@@ -33,7 +33,7 @@ class MainPresenter(private var model: MainModel) :
         val multiplier = DecimalFormat.getInstance().parse(afterChangeText).toDouble()
         model.tmpMultiplier = multiplier
 
-        //model.retrieveCurrencyResponse()
+        model.retrieveCurrencyResponse()
     }
 
     fun onFieldClicked(rateDto: RateDto) {

@@ -7,7 +7,6 @@ import com.currencyapp.network.CurrencyApi
 import com.currencyapp.utils.mapper.Mapper
 import com.google.gson.Gson
 import io.reactivex.Single
-import javax.inject.Inject
 
 class MainModel(
     private val currencyApi: CurrencyApi,
@@ -32,7 +31,6 @@ class MainModel(
                 }
 
                 tempSaveResponse(list)
-//                subject.onNext(list)
                 list
             }
     }

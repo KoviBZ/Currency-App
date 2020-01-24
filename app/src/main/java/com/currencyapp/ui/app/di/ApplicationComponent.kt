@@ -11,5 +11,6 @@ import dagger.Component
 )
 interface ApplicationComponent {
 
+    //subcomponents
     fun plusMainComponent(mainModule: MainModule): MainComponent
 }

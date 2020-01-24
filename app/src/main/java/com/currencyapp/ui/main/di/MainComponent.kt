@@ -1,7 +1,6 @@
 package com.currencyapp.ui.main.di
 
 import com.currencyapp.ui.main.view.MainActivity
-import dagger.Component
 import dagger.Subcomponent
 
 @Subcomponent(modules = [MainModule::class])
