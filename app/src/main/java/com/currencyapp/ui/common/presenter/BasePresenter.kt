@@ -26,8 +26,6 @@ open class BasePresenter<BaseView> {
         return this
             .subscribeOn(scheduler)
             .observeOn(AndroidSchedulers.mainThread())
-
-        //subscriptions.add(disposable)
     }
 
     fun clearSubscriptions() {

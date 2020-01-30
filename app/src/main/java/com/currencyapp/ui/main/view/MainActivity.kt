@@ -18,8 +18,9 @@ import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity(), MainView, OnItemClickListener {
+class MainActivity : AppCompatActivity(), MainView, TextWatcher {
 
     @Inject
     override lateinit var presenter: MainPresenter
@@ -36,6 +37,9 @@ class MainActivity : AppCompatActivity(), MainView, OnItemClickListener {
         mainComponent.inject(this)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = CurrencyAdapter(
+            applicationContext
+        )
 
         presenter.attachView(this)
         presenter.retrieveCurrencyResponse()
@@ -57,36 +61,7 @@ class MainActivity : AppCompatActivity(), MainView, OnItemClickListener {
     }
 
     override fun onDataLoadedSuccess(currencyList: ArrayList<RateDto>) {
-        recyclerView.adapter = CurrencyAdapter(
-            this,
-            currencyList,
-            this,
-            object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                    //no-op
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    presenter.onTextChanged(s.toString())
-                }
-
-                override fun afterTextChanged(s: Editable?) {
-                    //no-op
-                }
-
-            }
-        )
-
-        recyclerView.adapter
-    }
-
-    override fun onItemClicked(rateDto: RateDto) {
-        presenter.onFieldClicked(rateDto)
+        (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList)
     }
 
     override fun onDataLoadedFailure(error: Throwable) {
@@ -104,11 +79,25 @@ class MainActivity : AppCompatActivity(), MainView, OnItemClickListener {
     }
 
     override fun onCashFieldClicked() {
-
+//        val adapter = recyclerView.adapter as CurrencyAdapter
+//
+//        adapter.setItemsList()
     }
 
     override fun onCashFieldChanged() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun afterTextChanged(s: Editable?) {
+        presenter.onTextChanged(s.toString())
+    }
+
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        //no-op
+    }
+
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        //no-op
     }
 
 }

@@ -38,6 +38,7 @@
         android:inputType="numberDecimal"
         android:gravity="end"
         tools:text="12.0"
+        android:textColor="#000000"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

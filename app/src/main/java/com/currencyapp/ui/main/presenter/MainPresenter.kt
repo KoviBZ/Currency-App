@@ -13,18 +13,17 @@ class MainPresenter(private var model: MainModel) :
     BasePresenter<MainView>() {
 
     fun retrieveCurrencyResponse() {
-        val disposable =
-            model.retrieveCurrencyResponse()
-                .applySchedulers(IoScheduler())
-                .doOnSuccess { response ->
-                    successAction(response)
-                }
-                .doOnError { throwable ->
-                    failureAction(throwable)
-                }
-                .delay(2, TimeUnit.SECONDS)
-//                .repeat()
-                .subscribe()
+        val disposable = model.retrieveCurrencyResponse()
+            .applySchedulers(IoScheduler())
+            .doOnSuccess { response ->
+                successAction(response)
+            }
+            .doOnError { throwable ->
+                failureAction(throwable)
+            }
+//            .delay(2, TimeUnit.SECONDS)
+//            .repeat()
+            .subscribe()
 
         subscriptions.add(disposable)
     }
@@ -32,8 +31,6 @@ class MainPresenter(private var model: MainModel) :
     fun onTextChanged(afterChangeText: String) {
         val multiplier = DecimalFormat.getInstance().parse(afterChangeText).toDouble()
         model.tmpMultiplier = multiplier
-
-        model.retrieveCurrencyResponse()
     }
 
     fun onFieldClicked(rateDto: RateDto) {

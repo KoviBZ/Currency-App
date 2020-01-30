@@ -5,10 +5,3 @@ data class CurrencyResponse(
     val date: String, // 2018-09-06
     val rates: LinkedHashMap<String, Double>
 )
-
-//@StringDef(
-//
-//)
-//class CurrencyCode {
-//    EUR("EUR")
-//}
