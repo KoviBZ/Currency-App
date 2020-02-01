@@ -20,9 +20,7 @@ open class BasePresenter<BaseView> {
         subscriptions.clear()
     }
 
-    fun <RESPONSE> Single<RESPONSE>.applySchedulers(
-        scheduler: Scheduler
-    ): Single<RESPONSE> {
+    fun <RESPONSE> Single<RESPONSE>.applySchedulers(scheduler: Scheduler): Single<RESPONSE> {
         return this
             .subscribeOn(scheduler)
             .observeOn(AndroidSchedulers.mainThread())

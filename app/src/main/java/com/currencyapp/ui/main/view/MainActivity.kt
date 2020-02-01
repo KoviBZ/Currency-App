@@ -1,8 +1,6 @@
 package com.currencyapp.ui.main.view
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
@@ -12,15 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.localrepo.CurrencyAdapter
-import com.currencyapp.localrepo.OnItemClickListener
+import com.currencyapp.localrepo.OnItemMovedCallback
 import com.currencyapp.localrepo.RateDto
+import com.currencyapp.localrepo.TextChangedCallback
 import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity(), MainView, TextWatcher {
+class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextChangedCallback {
 
     @Inject
     override lateinit var presenter: MainPresenter
@@ -38,11 +36,13 @@ class MainActivity : AppCompatActivity(), MainView, TextWatcher {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = CurrencyAdapter(
-            applicationContext
+            applicationContext,
+            this,
+            this
         )
 
         presenter.attachView(this)
-        presenter.retrieveCurrencyResponse()
+        presenter.retrieveCurrencyResponse(1.0) //TODO magic number
     }
 
 //    override fun onStart() {
@@ -88,16 +88,13 @@ class MainActivity : AppCompatActivity(), MainView, TextWatcher {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun afterTextChanged(s: Editable?) {
-        presenter.onTextChanged(s.toString())
+    //TODO to remove?
+    override fun onItemMoved(item: RateDto) {
+        presenter.retrieveCurrencyResponse(1.0)
     }
 
-    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        //no-op
-    }
-
-    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        //no-op
+    override fun onTextChanged(changedText: String) {
+        presenter.onTextChanged(changedText)
     }
 
 }

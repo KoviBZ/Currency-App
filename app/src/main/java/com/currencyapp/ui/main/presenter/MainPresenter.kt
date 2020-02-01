@@ -12,8 +12,8 @@ import javax.inject.Inject
 class MainPresenter(private var model: MainModel) :
     BasePresenter<MainView>() {
 
-    fun retrieveCurrencyResponse() {
-        val disposable = model.retrieveCurrencyResponse()
+    fun retrieveCurrencyResponse(multiplier: Double) {
+        val disposable = model.retrieveCurrencyResponse(multiplier)
             .applySchedulers(IoScheduler())
             .doOnSuccess { response ->
                 successAction(response)
@@ -29,13 +29,13 @@ class MainPresenter(private var model: MainModel) :
     }
 
     fun onTextChanged(afterChangeText: String) {
-        val multiplier = DecimalFormat.getInstance().parse(afterChangeText).toDouble()
-        model.tmpMultiplier = multiplier
+        //TODO remove?
     }
 
     fun onFieldClicked(rateDto: RateDto) {
         model.tempSaveBaseCurrency(rateDto.key)
-        model.tmpMultiplier = rateDto.value
+
+        retrieveCurrencyResponse(rateDto.value)
     }
 
     private fun successAction(response: ArrayList<RateDto>) {

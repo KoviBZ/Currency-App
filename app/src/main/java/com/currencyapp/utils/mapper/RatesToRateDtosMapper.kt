@@ -11,11 +11,4 @@ class RatesToRateDtosMapper @Inject constructor(): Mapper<Map.Entry<String, Doub
             from.value
         )
     }
-
-    override fun mapWithMultiplier(from: Map.Entry<String, Double>, multiplier: Double): RateDto {
-        return RateDto(
-            from.key,
-            from.value * multiplier
-        )
-    }
 }

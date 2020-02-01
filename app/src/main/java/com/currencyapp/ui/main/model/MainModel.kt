@@ -14,20 +14,18 @@ class MainModel(
     private val mapper: Mapper<Map.Entry<String, Double>, RateDto>
 ) {
 
-    var tmpMultiplier = 100.0
-
     val RESPONSE_JSON = "RESPONSE_JSON"
     val MULTIPLIER_JSON = "MULTIPLIER_JSON"
     val BASE_CURRENCY_JSON = "BASE_CURRENCY_JSON"
 
-    fun retrieveCurrencyResponse(): Single<ArrayList<RateDto>> {
+    fun retrieveCurrencyResponse(multiplier: Double): Single<ArrayList<RateDto>> {
         return currencyApi.getCurrencies(tempGetBaseCurrency())
             .map { response ->
                 val list = ArrayList<RateDto>()
-                list.add(RateDto(tempGetBaseCurrency(), tmpMultiplier))
+                list.add(RateDto(tempGetBaseCurrency(), multiplier))
 
                 response.rates.iterator().forEach {
-                    list.add(mapper.mapWithMultiplier(it, tmpMultiplier))
+                    list.add(mapper.map(it))
                 }
 
                 tempSaveResponse(list)
