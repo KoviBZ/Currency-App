@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextCha
     private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
     private val progressBar: ProgressBar by lazy { findViewById<ProgressBar>(R.id.progress_bar) }
 
+    private lateinit var adapter: CurrencyAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -35,11 +37,12 @@ class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextCha
         mainComponent.inject(this)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = CurrencyAdapter(
+        this.adapter = CurrencyAdapter(
             applicationContext,
             this,
             this
         )
+        recyclerView.adapter = this.adapter
 
         presenter.attachView(this)
         presenter.retrieveCurrencyResponse(1.0) //TODO magic number
@@ -93,8 +96,11 @@ class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextCha
         presenter.retrieveCurrencyResponse(1.0)
     }
 
-    override fun onTextChanged(changedText: String) {
-        presenter.onTextChanged(changedText)
+    override fun onTextChanged(currency: String, changedMultiplier: Double) {
+        presenter.onTextChanged(currency, changedMultiplier)
     }
 
+    override fun updateRates(changedMultiplier: Double) {
+        this.adapter.updateRates(changedMultiplier)
+    }
 }

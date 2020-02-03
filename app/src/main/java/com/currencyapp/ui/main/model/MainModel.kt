@@ -18,11 +18,11 @@ class MainModel(
     val MULTIPLIER_JSON = "MULTIPLIER_JSON"
     val BASE_CURRENCY_JSON = "BASE_CURRENCY_JSON"
 
-    fun retrieveCurrencyResponse(multiplier: Double): Single<ArrayList<RateDto>> {
+    fun retrieveCurrencyResponse(): Single<ArrayList<RateDto>> {
         return currencyApi.getCurrencies(tempGetBaseCurrency())
             .map { response ->
                 val list = ArrayList<RateDto>()
-                list.add(RateDto(tempGetBaseCurrency(), multiplier))
+                list.add(RateDto(tempGetBaseCurrency(), 1.0))
 
                 response.rates.iterator().forEach {
                     list.add(mapper.map(it))

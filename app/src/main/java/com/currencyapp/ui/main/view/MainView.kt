@@ -13,4 +13,6 @@ interface MainView: BaseView<MainPresenter> {
     fun onCashFieldClicked()
 
     fun onCashFieldChanged()
+
+    fun updateRates(changedMultiplier: Double)
 }

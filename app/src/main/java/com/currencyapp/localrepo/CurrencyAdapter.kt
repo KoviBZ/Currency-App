@@ -9,26 +9,24 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
-import com.currencyapp.utils.CurrencyDiffCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
-import kotlin.collections.ArrayList
 
 class CurrencyAdapter(
     private val context: Context,
     private val onItemMovedCallback: OnItemMovedCallback,
     private val textChangedCallback: TextChangedCallback
-) : RecyclerView.Adapter<CurrencyAdapter.CurrencyViewHolder>() {
+) : RecyclerView.Adapter<CurrencyAdapter.RateViewHolder>() {
 
-    private var itemsList = ArrayList<RateDto>()
+    private var currencyList = ArrayList<RateDto>()
+    private var currencyRateMap = HashMap<String, RateDto>()
 
     private var multiplier: Double = 1.0
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
-        return CurrencyViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RateViewHolder {
+        return RateViewHolder(
             LayoutInflater
                 .from(context)
                 .inflate(
@@ -39,42 +37,79 @@ class CurrencyAdapter(
         )
     }
 
-    override fun getItemCount(): Int = itemsList.size
+    override fun getItemCount(): Int = currencyList.size
+
+    private fun getRateAtPosition(position: Int): RateDto? {
+        return currencyRateMap[currencyList[position].key]
+    }
 
     fun setItemsList(newList: ArrayList<RateDto>) {
-        val diffCallback = CurrencyDiffCallback(itemsList, newList)
-        val result = DiffUtil.calculateDiff(diffCallback)
-        result.dispatchUpdatesTo(this)
+        if (currencyList.isEmpty()) {
+            currencyList.addAll(newList)
+        }
 
-        this.itemsList = newList
+        for (currency in newList) {
+            currencyRateMap[currency.key] = (currency)
+        }
+
+        notifyItemRangeChanged(1, currencyList.size - 1, multiplier)
     }
 
-    override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
-        holder.bind(
-            itemsList[position],
-            textChangedCallback
-        )
+    fun updateRates(newMultiplier: Double) {
+        this.multiplier = newMultiplier
+
+        notifyItemRangeChanged(0, currencyList.size - 1, multiplier)
     }
 
-    inner class CurrencyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    override fun onBindViewHolder(holder: RateViewHolder, position: Int) {
+        getRateAtPosition(position)?.let {
+            holder.bind(it)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RateViewHolder, position: Int, payloads: List<Any>) {
+        getRateAtPosition(position)?.let {
+            if (payloads.isNotEmpty()) {
+                holder.bind(it)
+            } else {
+                super.onBindViewHolder(holder, position, payloads)
+            }
+        }
+    }
+
+    inner class RateViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val countryImageView by lazy { view.findViewById<ImageView>(R.id.country_iv) }
         private val currencyCodeTextView by lazy { view.findViewById<TextView>(R.id.currency_code_tv) }
         private val currencyNameTextView by lazy { view.findViewById<TextView>(R.id.currency_name_tv) }
         private val currencyValueEditText by lazy { view.findViewById<EditText>(R.id.currency_value_et) }
 
-        fun bind(
-            rateDto: RateDto,
-            textChangedCallback: TextChangedCallback
-        ) {
+        private var symbol = ""
+
+        fun bind(rate: RateDto) {
+
+            if (symbol != rate.key) {
+                initView(rate)
+                this.symbol = rate.key
+            }
+
+            // If the EditText holds the focus, we don't change the value
+            if (!currencyValueEditText.isFocused) {
+                val formatter = DecimalFormat("#0.00")
+                currencyValueEditText.setText(formatter.format(rate.value * multiplier).toString())
+            } else {
+//                currencyValueEditText.removeTextChangedListener()
+            }
+        }
+
+        private fun initView(rateDto: RateDto) {
             val currencyObj = ExtendedCurrency.getCurrencyByISO(rateDto.key)
             countryImageView.setImageResource(currencyObj.flag)
 
             currencyCodeTextView.text = rateDto.key
-
             currencyNameTextView.text = currencyObj.name
 
-            val formatter = DecimalFormat("#.00")
+            val formatter = DecimalFormat("#0.00")
             currencyValueEditText.setText(formatter.format(rateDto.value * multiplier))
             currencyValueEditText.onFocusChangeListener =
                 View.OnFocusChangeListener { _, hasFocus ->
@@ -85,27 +120,30 @@ class CurrencyAdapter(
 
                     layoutPosition.takeIf { it != 0 }?.also { currentPosition ->
 
-                        itemsList.removeAt(currentPosition).also {
-                            itemsList.add(0, it)
+                        currencyList.removeAt(currentPosition).also {
+                            currencyList.add(0, it)
                         }
 
                         notifyItemMoved(currentPosition, 0)
                     }
-
-                    //TODO podmień value 0go ze zmienionym
                 }
-            currencyValueEditText.addTextChangedListener(object: TextWatcher {
+
+            currencyValueEditText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(changedText: Editable?) {
                     val changedString = changedText.toString()
 
-                    if(currencyValueEditText.hasFocus()) {
+                    if (currencyValueEditText.isFocused && changedString.isNotEmpty()) {
                         multiplier = changedString.toDouble()
-
-                        notifyItemRangeChanged(1, itemsList.size, multiplier)
+                        textChangedCallback.onTextChanged(rateDto.key, multiplier)
                     }
                 }
 
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
                     //intentionally left empty
                 }
 

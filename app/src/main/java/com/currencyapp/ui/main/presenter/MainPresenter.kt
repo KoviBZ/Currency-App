@@ -5,15 +5,11 @@ import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import io.reactivex.internal.schedulers.IoScheduler
-import java.text.DecimalFormat
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-class MainPresenter(private var model: MainModel) :
-    BasePresenter<MainView>() {
+class MainPresenter(private var model: MainModel) : BasePresenter<MainView>() {
 
     fun retrieveCurrencyResponse(multiplier: Double) {
-        val disposable = model.retrieveCurrencyResponse(multiplier)
+        val disposable = model.retrieveCurrencyResponse()
             .applySchedulers(IoScheduler())
             .doOnSuccess { response ->
                 successAction(response)
@@ -28,8 +24,13 @@ class MainPresenter(private var model: MainModel) :
         subscriptions.add(disposable)
     }
 
-    fun onTextChanged(afterChangeText: String) {
-        //TODO remove?
+    fun onTextChanged(currency: String, changedMultiplier: Double) {
+        if(currency != model.tempGetBaseCurrency()) {
+            model.tempSaveBaseCurrency(currency)
+            retrieveCurrencyResponse(changedMultiplier)
+        } else {
+            view?.updateRates(changedMultiplier)
+        }
     }
 
     fun onFieldClicked(rateDto: RateDto) {
