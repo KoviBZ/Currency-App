@@ -15,9 +15,7 @@ import dagger.Provides
 class MainModule {
 
     @Provides
-    fun provideMainPresenter(
-        model: MainModel
-    ): MainPresenter = MainPresenter(model)
+    fun provideMainPresenter(model: MainModel): MainPresenter = MainPresenter(model)
 
     @Provides
     fun provideMainModel(

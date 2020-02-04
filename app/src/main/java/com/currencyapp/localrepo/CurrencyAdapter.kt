@@ -16,14 +16,13 @@ import java.text.DecimalFormat
 
 class CurrencyAdapter(
     private val context: Context,
-    private val onItemMovedCallback: OnItemMovedCallback,
     private val textChangedCallback: TextChangedCallback
 ) : RecyclerView.Adapter<CurrencyAdapter.RateViewHolder>() {
 
     private var currencyList = ArrayList<RateDto>()
     private var currencyRateMap = HashMap<String, RateDto>()
 
-    private var multiplier: Double = 1.0
+    private var multiplier: Double = 100.0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RateViewHolder {
         return RateViewHolder(
@@ -86,49 +85,9 @@ class CurrencyAdapter(
 
         private var symbol = ""
 
-        fun bind(rate: RateDto) {
+        fun bind(rateDto: RateDto) {
 
-            if (symbol != rate.key) {
-                initView(rate)
-                this.symbol = rate.key
-            }
-
-            // If the EditText holds the focus, we don't change the value
-            if (!currencyValueEditText.isFocused) {
-                val formatter = DecimalFormat("#0.00")
-                currencyValueEditText.setText(formatter.format(rate.value * multiplier).toString())
-            } else {
-//                currencyValueEditText.removeTextChangedListener()
-            }
-        }
-
-        private fun initView(rateDto: RateDto) {
-            val currencyObj = ExtendedCurrency.getCurrencyByISO(rateDto.key)
-            countryImageView.setImageResource(currencyObj.flag)
-
-            currencyCodeTextView.text = rateDto.key
-            currencyNameTextView.text = currencyObj.name
-
-            val formatter = DecimalFormat("#0.00")
-            currencyValueEditText.setText(formatter.format(rateDto.value * multiplier))
-            currencyValueEditText.onFocusChangeListener =
-                View.OnFocusChangeListener { _, hasFocus ->
-                    //If view lost focus, we do nothing
-                    if (!hasFocus) {
-                        return@OnFocusChangeListener
-                    }
-
-                    layoutPosition.takeIf { it != 0 }?.also { currentPosition ->
-
-                        currencyList.removeAt(currentPosition).also {
-                            currencyList.add(0, it)
-                        }
-
-                        notifyItemMoved(currentPosition, 0)
-                    }
-                }
-
-            currencyValueEditText.addTextChangedListener(object : TextWatcher {
+            val textWatcher = object : TextWatcher {
                 override fun afterTextChanged(changedText: Editable?) {
                     val changedString = changedText.toString()
 
@@ -150,8 +109,48 @@ class CurrencyAdapter(
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     //intentionally left empty
                 }
+            }
 
-            })
+            if (symbol != rateDto.key) {
+                initView(rateDto, textWatcher)
+                this.symbol = rateDto.key
+            }
+
+            // If the EditText holds the focus, we don't change the value
+            if (!currencyValueEditText.isFocused) {
+                val formatter = DecimalFormat("#0.00")
+                currencyValueEditText.setText(formatter.format(rateDto.value * multiplier).toString())
+            }
+        }
+
+        private fun initView(rateDto: RateDto, textWatcher: TextWatcher) {
+            val currencyObj = ExtendedCurrency.getCurrencyByISO(rateDto.key)
+            countryImageView.setImageResource(currencyObj.flag)
+
+            currencyCodeTextView.text = rateDto.key
+            currencyNameTextView.text = currencyObj.name
+
+            val formatter = DecimalFormat("#0.00")
+            currencyValueEditText.setText(formatter.format(rateDto.value * multiplier))
+            currencyValueEditText.onFocusChangeListener =
+                View.OnFocusChangeListener { _, hasFocus ->
+                    //If view lost focus, we do nothing
+                    if (!hasFocus) {
+                        currencyValueEditText.removeTextChangedListener(textWatcher)
+                        return@OnFocusChangeListener
+                    }
+
+                    layoutPosition.takeIf { it != 0 }?.also { currentPosition ->
+
+                        currencyList.removeAt(currentPosition).also {
+                            currencyList.add(0, it)
+                        }
+
+                        notifyItemMoved(currentPosition, 0)
+                    }
+
+                    currencyValueEditText.addTextChangedListener(textWatcher)
+                }
         }
     }
 }

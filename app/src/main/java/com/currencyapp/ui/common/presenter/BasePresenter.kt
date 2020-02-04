@@ -1,17 +1,18 @@
 package com.currencyapp.ui.common.presenter
 
+import com.currencyapp.ui.common.view.BaseView
 import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
-open class BasePresenter<BaseView> {
+open class BasePresenter<T: BaseView> {
 
-    protected var view: BaseView? = null
+    protected lateinit var view: T
 
     protected lateinit var subscriptions: CompositeDisposable
 
-    fun attachView(view: BaseView) {
+    fun attachView(view: T) {
         this.view = view
         subscriptions = CompositeDisposable()
     }
@@ -24,6 +25,7 @@ open class BasePresenter<BaseView> {
         return this
             .subscribeOn(scheduler)
             .observeOn(AndroidSchedulers.mainThread())
+//            .doOnSubscribe { view.showProgress() }
     }
 
     fun clearSubscriptions() {

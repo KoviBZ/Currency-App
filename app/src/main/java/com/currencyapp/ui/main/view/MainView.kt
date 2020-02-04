@@ -2,9 +2,8 @@ package com.currencyapp.ui.main.view
 
 import com.currencyapp.localrepo.RateDto
 import com.currencyapp.ui.common.view.BaseView
-import com.currencyapp.ui.main.presenter.MainPresenter
 
-interface MainView: BaseView<MainPresenter> {
+interface MainView: BaseView {
 
     fun onDataLoadedSuccess(currencyList: ArrayList<RateDto>)
 

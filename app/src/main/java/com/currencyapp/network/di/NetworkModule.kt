@@ -1,5 +1,6 @@
 package com.currencyapp.network.di
 
+import com.currencyapp.BuildConfig
 import com.currencyapp.network.CurrencyApi
 import dagger.Module
 import dagger.Provides
@@ -11,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 class NetworkModule {
 
-    val HOST = "https://revolut.duckdns.org/"
+    private val HOST = BuildConfig.BASE_URL
 
     @Provides
     fun provideCurrencyApi(): CurrencyApi {
