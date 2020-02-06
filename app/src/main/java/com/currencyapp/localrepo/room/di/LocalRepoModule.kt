@@ -7,10 +7,10 @@ import com.currencyapp.localrepo.room.AppDatabase
 import dagger.Provides
 
 @Module
-object LocalRepoModule {
+class LocalRepoModule {
 
     @Provides
-    fun provideRoomDatabase(context: Context): AppDatabase {
+    fun provideAppDatabase(context: Context): AppDatabase {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,

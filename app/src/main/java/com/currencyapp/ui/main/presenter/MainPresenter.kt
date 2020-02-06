@@ -1,6 +1,7 @@
 package com.currencyapp.ui.main.presenter
 
 import com.currencyapp.ui.common.presenter.BasePresenter
+import com.currencyapp.ui.main.model.DefaultMainModel
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import io.reactivex.schedulers.Schedulers
@@ -44,5 +45,9 @@ class MainPresenter(private var model: MainModel) : BasePresenter<MainView>() {
         if (subscriptions.size() == 0) {
             retrieveCurrencyResponse(baseCurrency)
         }
+    }
+
+    fun saveOfflineData() {
+
     }
 }

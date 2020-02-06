@@ -1,4 +1,4 @@
-package com.currencyapp.localrepo
+package com.currencyapp.ui.main.view.adapter
 
 import android.content.Context
 import android.text.Editable
@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
+import com.currencyapp.localrepo.RateDto
+import com.currencyapp.utils.TextChangedCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
 

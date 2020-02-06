@@ -9,9 +9,5 @@ interface MainView: BaseView {
 
     fun onDataLoadedFailure(error: Throwable)
 
-    fun onCashFieldClicked()
-
-    fun onCashFieldChanged()
-
     fun updateRates(changedMultiplier: Double)
 }

@@ -9,16 +9,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
-import com.currencyapp.localrepo.CurrencyAdapter
-import com.currencyapp.localrepo.OnItemMovedCallback
+import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
 import com.currencyapp.localrepo.RateDto
-import com.currencyapp.localrepo.TextChangedCallback
+import com.currencyapp.utils.TextChangedCallback
 import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextChangedCallback {
+class MainActivity : AppCompatActivity(), MainView,
+    TextChangedCallback {
 
     @Inject
     override lateinit var presenter: MainPresenter
@@ -39,19 +39,18 @@ class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextCha
         recyclerView.layoutManager = LinearLayoutManager(this)
         this.adapter = CurrencyAdapter(
             applicationContext,
-            this,
             this
         )
         recyclerView.adapter = this.adapter
 
         presenter.attachView(this)
-        presenter.retrieveCurrencyResponse(1.0) //TODO magic number
+        presenter.retrieveCurrencyResponse("EUR") //TODO magic number
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//        presenter.restartSubscription()
-//    }
+    override fun onStart() {
+        super.onStart()
+        presenter.restartSubscription()
+    }
 
     override fun onStop() {
         presenter.clearSubscriptions()
@@ -63,12 +62,22 @@ class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextCha
         super.onDestroy()
     }
 
+    //TODO really!
     override fun onDataLoadedSuccess(currencyList: ArrayList<RateDto>) {
-        (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList)
+        runOnUiThread {
+            (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList)
+            Log.d("MainActivity", "succeed")
+        }
     }
 
+    //TODO really!
     override fun onDataLoadedFailure(error: Throwable) {
-        Toast.makeText(applicationContext, "failed...", Toast.LENGTH_SHORT).show()
+        runOnUiThread {
+//            presenter.saveOfflineData()
+
+            Toast.makeText(applicationContext, "failed...", Toast.LENGTH_SHORT).show()
+            Log.e("MainActivity", "failed")
+        }
     }
 
     override fun showProgress() {
@@ -79,21 +88,6 @@ class MainActivity : AppCompatActivity(), MainView, OnItemMovedCallback, TextCha
     override fun hideProgress() {
         progressBar.visibility = View.GONE
         Log.d("ProgressBar", "gone")
-    }
-
-    override fun onCashFieldClicked() {
-//        val adapter = recyclerView.adapter as CurrencyAdapter
-//
-//        adapter.setItemsList()
-    }
-
-    override fun onCashFieldChanged() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    //TODO to remove?
-    override fun onItemMoved(item: RateDto) {
-        presenter.retrieveCurrencyResponse(1.0)
     }
 
     override fun onTextChanged(currency: String, changedMultiplier: Double) {

@@ -1,4 +1,4 @@
-package com.currencyapp.localrepo
+package com.currencyapp.utils
 
 interface TextChangedCallback {
 

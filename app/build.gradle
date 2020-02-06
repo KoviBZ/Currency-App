@@ -24,43 +24,51 @@ android {
 }
 
 kapt {
+    correctErrorTypes true
     generateStubs = true
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "androidx.core:core-ktx:$appcompat_version"
+    implementation "com.google.android.material:material:$appcompat_version"
+
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.1.0'
+
     testImplementation 'junit:junit:4.12'
 
     //Dagger
-    implementation 'com.google.dagger:dagger-android:2.20'
-    kapt 'com.google.dagger:dagger-android-processor:2.20'
-    kapt 'com.google.dagger:dagger-compiler:2.20'
+    implementation "com.google.dagger:dagger-android:$dagger_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
+    kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     //RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
     //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
 
     //Room
-    implementation  "android.arch.persistence.room:runtime:1.1.1"
-    annotationProcessor  "android.arch.persistence.room:compiler:1.1.1"
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    kapt "androidx.lifecycle:lifecycle-compiler:2.2.0"
+    implementation "androidx.room:room-runtime:2.2.3"
+    kapt "androidx.room:room-compiler:2.2.3"
 
     //Gson TO REMOVE
     implementation 'com.google.code.gson:gson:2.8.5'
 
     //Currency picker
-    implementation 'com.github.midorikocak:currency-picker-android:1.2.1'
+    implementation "com.github.midorikocak:currency-picker-android:$currency_picker_version"
 
     //Circle image view
-    implementation 'de.hdodenhof:circleimageview:3.0.2'
+    implementation "de.hdodenhof:circleimageview:$circle_image_version"
 }

@@ -1,6 +1,6 @@
 package com.currencyapp.network
 
-import com.currencyapp.localrepo.CurrencyResponse
+import com.currencyapp.network.entity.CurrencyResponse
 import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.http.GET

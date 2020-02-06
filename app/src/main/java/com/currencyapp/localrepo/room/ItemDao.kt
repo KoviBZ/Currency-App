@@ -1,20 +1,19 @@
 package com.currencyapp.localrepo.room
 
-import android.content.ClipData.Item
-import androidx.room.Delete
-import androidx.room.Update
-import androidx.room.Dao
-import androidx.room.Insert
+import androidx.room.*
 
 @Dao
-interface ItemDao {
+abstract class ItemDao {
 
-    @Insert
-    fun insert(vararg items: Item)
+    @Insert/*(onConflict = OnConflictStrategy.REPLACE)*/
+    abstract fun insert(vararg items: CurrencyItemRoomDto)
 
     @Update
-    fun update(vararg items: Item)
+    abstract fun update(vararg items: CurrencyItemRoomDto)
 
     @Delete
-    fun delete(item: Item)
+    abstract fun delete(item: CurrencyItemRoomDto)
+
+    @Query("SELECT * from lastResponse")
+    abstract fun getReasons(): List<CurrencyItemRoomDto>
 }

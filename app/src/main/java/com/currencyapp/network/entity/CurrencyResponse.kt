@@ -1,14 +1,7 @@
 package com.currencyapp.network.entity
 
-import com.currencyapp.localrepo.CurrencyResponse
-
-sealed class CurrencyHttpResponse {
-
-    data class Success(
-        val currencyResponse: CurrencyResponse
-    )
-
-    data class Failure(
-        val error: Throwable
-    )
-}
+data class CurrencyResponse(
+    val base: String,
+    val date: String, // 2018-09-06
+    val rates: LinkedHashMap<String, Double>
+)
