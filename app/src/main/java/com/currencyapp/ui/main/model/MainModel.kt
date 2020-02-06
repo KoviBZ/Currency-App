@@ -1,6 +1,6 @@
 package com.currencyapp.ui.main.model
 
-import com.currencyapp.localrepo.RateDto
+import com.currencyapp.network.entity.RateDto
 import io.reactivex.Single
 
 interface MainModel {

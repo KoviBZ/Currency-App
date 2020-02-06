@@ -1,11 +1,9 @@
 package com.currencyapp.ui.main.di
 
 import android.content.SharedPreferences
-import com.currencyapp.localrepo.RateDto
-import com.currencyapp.localrepo.room.AppDatabase
-import com.currencyapp.localrepo.room.di.LocalRepoModule
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.di.NetworkModule
+import com.currencyapp.network.entity.RateDto
 import com.currencyapp.ui.main.model.DefaultMainModel
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.presenter.MainPresenter
@@ -15,8 +13,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module(includes = [
-    NetworkModule::class,
-    LocalRepoModule::class
+    NetworkModule::class
 ])
 class MainModule {
 
@@ -26,10 +23,8 @@ class MainModule {
     @Provides
     fun provideMainModel(
         currencyApi: CurrencyApi,
-        sharedPreferences: SharedPreferences,
-        roomDatabase: AppDatabase,
         mapper: Mapper<Map.Entry<String, Double>, RateDto>
-    ): MainModel = DefaultMainModel(currencyApi, sharedPreferences, roomDatabase, mapper)
+    ): MainModel = DefaultMainModel(currencyApi, mapper)
 
     @Provides
     fun provideRatesToRateDtosMapper(): Mapper<Map.Entry<String, Double>, RateDto> =

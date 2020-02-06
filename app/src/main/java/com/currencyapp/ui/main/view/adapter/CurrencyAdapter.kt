@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
-import com.currencyapp.localrepo.RateDto
+import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.TextChangedCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat

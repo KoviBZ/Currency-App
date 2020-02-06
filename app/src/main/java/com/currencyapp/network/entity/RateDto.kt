@@ -1,4 +1,4 @@
-package com.currencyapp.localrepo
+package com.currencyapp.network.entity
 
 data class RateDto(
     val key: String,

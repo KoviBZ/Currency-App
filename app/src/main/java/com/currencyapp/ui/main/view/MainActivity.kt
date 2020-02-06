@@ -10,18 +10,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
-import com.currencyapp.localrepo.RateDto
+import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.TextChangedCallback
 import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainView,
-    TextChangedCallback {
+class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
 
     @Inject
-    override lateinit var presenter: MainPresenter
+    lateinit var presenter: MainPresenter
 
     private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
     private val progressBar: ProgressBar by lazy { findViewById<ProgressBar>(R.id.progress_bar) }

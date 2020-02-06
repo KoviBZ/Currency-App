@@ -24,7 +24,6 @@ android {
 }
 
 kapt {
-    correctErrorTypes true
     generateStubs = true
 }
 
@@ -54,17 +53,6 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
-
-    //Room
-    implementation "android.arch.persistence.room:runtime:$room_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    kapt "androidx.lifecycle:lifecycle-compiler:2.2.0"
-    implementation "androidx.room:room-runtime:2.2.3"
-    kapt "androidx.room:room-compiler:2.2.3"
-
-    //Gson TO REMOVE
-    implementation 'com.google.code.gson:gson:2.8.5'
 
     //Currency picker
     implementation "com.github.midorikocak:currency-picker-android:$currency_picker_version"

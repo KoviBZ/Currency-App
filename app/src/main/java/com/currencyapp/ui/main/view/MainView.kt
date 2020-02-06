@@ -1,6 +1,6 @@
 package com.currencyapp.ui.main.view
 
-import com.currencyapp.localrepo.RateDto
+import com.currencyapp.network.entity.RateDto
 import com.currencyapp.ui.common.view.BaseView
 
 interface MainView: BaseView {

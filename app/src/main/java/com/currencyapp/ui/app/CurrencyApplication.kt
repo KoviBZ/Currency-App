@@ -1,7 +1,6 @@
 package com.currencyapp.ui.app
 
 import android.app.Application
-import com.currencyapp.localrepo.room.di.LocalRepoModule
 import com.currencyapp.ui.app.di.ApplicationComponent
 import com.currencyapp.ui.app.di.ApplicationModule
 import com.currencyapp.ui.app.di.DaggerApplicationComponent
