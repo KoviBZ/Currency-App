@@ -1,12 +1,17 @@
 package com.currencyapp.ui.main.presenter
 
+import com.currencyapp.network.utils.BaseSchedulerProvider
+import com.currencyapp.network.utils.SchedulerProvider
 import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-class MainPresenter(private var model: MainModel) : BasePresenter<MainView>() {
+class MainPresenter(
+    schedulerProvider: BaseSchedulerProvider,
+    private val model: MainModel
+) : BasePresenter<MainView>(schedulerProvider) {
 
     private var baseCurrency = ""
 
@@ -14,7 +19,7 @@ class MainPresenter(private var model: MainModel) : BasePresenter<MainView>() {
         this.baseCurrency = currency
 
         val disposable = model.retrieveCurrencyResponse(currency)
-            .applySchedulers(Schedulers.io())
+            .applySchedulers()
             .delay(1, TimeUnit.SECONDS)
             .repeatUntil {
                 val isGood = currency != baseCurrency

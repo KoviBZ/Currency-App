@@ -1,12 +1,13 @@
 package com.currencyapp.ui.common.presenter
 
+import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.ui.common.view.BaseView
-import io.reactivex.Scheduler
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
-open class BasePresenter<T: BaseView> {
+open class BasePresenter<T: BaseView>(
+    private val schedulerProvider: BaseSchedulerProvider
+) {
 
     protected lateinit var view: T
 
@@ -21,10 +22,10 @@ open class BasePresenter<T: BaseView> {
         subscriptions.clear()
     }
 
-    fun <RESPONSE> Single<RESPONSE>.applySchedulers(scheduler: Scheduler): Single<RESPONSE> {
+    fun <RESPONSE> Single<RESPONSE>.applySchedulers(): Single<RESPONSE> {
         return this
-            .subscribeOn(scheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
 //            .doOnSubscribe { view.showProgress() }
     }
 

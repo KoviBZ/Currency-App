@@ -12,7 +12,7 @@ class DefaultMainModel(
     private val mapper: Mapper<Map.Entry<String, Double>, RateDto>
 ) : MainModel {
 
-    override fun retrieveCurrencyResponse(currency: String): Single<ArrayList<RateDto>> {
+    override fun retrieveCurrencyResponse(currency: String): Single<List<RateDto>> {
         return currencyApi.getCurrencies(currency)
             .map { response ->
                 val list = ArrayList<RateDto>()

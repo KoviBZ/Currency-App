@@ -5,7 +5,7 @@ import com.currencyapp.ui.common.view.BaseView
 
 interface MainView: BaseView {
 
-    fun onDataLoadedSuccess(currencyList: ArrayList<RateDto>)
+    fun onDataLoadedSuccess(currencyList: List<RateDto>)
 
     fun onDataLoadedFailure(error: Throwable)
 

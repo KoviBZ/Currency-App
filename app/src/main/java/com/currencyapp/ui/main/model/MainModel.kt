@@ -4,5 +4,5 @@ import com.currencyapp.network.entity.RateDto
 import io.reactivex.Single
 
 interface MainModel {
-    fun retrieveCurrencyResponse(currency: String): Single<ArrayList<RateDto>>
+    fun retrieveCurrencyResponse(currency: String): Single<List<RateDto>>
 }

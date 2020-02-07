@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
     }
 
     //TODO really!
-    override fun onDataLoadedSuccess(currencyList: ArrayList<RateDto>) {
+    override fun onDataLoadedSuccess(currencyList: List<RateDto>) {
         runOnUiThread {
             (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList)
             Log.d("MainActivity", "succeed")

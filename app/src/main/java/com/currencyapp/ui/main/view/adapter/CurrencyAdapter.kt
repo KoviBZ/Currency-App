@@ -44,7 +44,7 @@ class CurrencyAdapter(
         return currencyRateMap[currencyList[position].key]
     }
 
-    fun setItemsList(newList: ArrayList<RateDto>) {
+    fun setItemsList(newList: List<RateDto>) {
         if (currencyList.isEmpty()) {
             currencyList.addAll(newList)
         }
