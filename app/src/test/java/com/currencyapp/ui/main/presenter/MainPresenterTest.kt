@@ -6,11 +6,15 @@ import com.currencyapp.network.utils.TestSchedulerProvider
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import io.reactivex.Single
+import io.reactivex.internal.schedulers.TrampolineScheduler
+import io.reactivex.schedulers.TestScheduler
 import org.mockito.BDDMockito.given
 import org.mockito.Matchers.anyString
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
+import java.util.concurrent.TimeUnit
 
 const val TEST_CURRENCY = "test"
 
@@ -23,10 +27,15 @@ class MainPresenterTest : Spek({
 
     val presenter by memoized { MainPresenter(schedulers, model) }
 
+    beforeEachTest {
+        presenter.attachView(view)
+    }
+
     describe("attach view") {
 
         beforeEachTest {
-            presenter.attachView(view)
+            (schedulers.io() as TestScheduler).advanceTimeTo(1, TimeUnit.SECONDS)
+            (schedulers.ui() as TestScheduler).advanceTimeTo(1, TimeUnit.SECONDS)
         }
 
         context("request succeeds") {
@@ -44,7 +53,7 @@ class MainPresenterTest : Spek({
             }
 
             it("should call on data loaded success") {
-                view.onDataLoadedSuccess(list)
+                verify(view).onDataLoadedSuccess(list)
             }
         }
 
@@ -63,7 +72,7 @@ class MainPresenterTest : Spek({
             }
 
             it("should call on data loaded failure") {
-                view.onDataLoadedFailure(errorResponse)
+                verify(view).onDataLoadedFailure(errorResponse)
             }
         }
     }

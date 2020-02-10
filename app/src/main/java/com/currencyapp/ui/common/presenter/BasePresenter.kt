@@ -26,7 +26,12 @@ open class BasePresenter<T: BaseView>(
         return this
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
-//            .doOnSubscribe { view.showProgress() }
+    }
+
+    fun <RESPONSE> Single<RESPONSE>.applySubscribeActions(): Single<RESPONSE> {
+        return this
+            .doOnSubscribe { view.showProgress() }
+            .doFinally { view.hideProgress() }
     }
 
     fun clearSubscriptions() {

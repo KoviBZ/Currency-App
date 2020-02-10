@@ -52,3 +52,5 @@
 
 # RxJava
 -dontwarn java.util.concurrent.Flow*
+
+# Dagger

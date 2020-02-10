@@ -5,6 +5,7 @@ import com.currencyapp.network.utils.SchedulerProvider
 import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
@@ -49,5 +50,28 @@ class MainPresenter(
         if (subscriptions.size() == 0) {
             retrieveCurrencyResponse(baseCurrency)
         }
+    }
+
+    fun retry() {
+        val currency = baseCurrency
+
+        val disposable = model.retrieveCurrencyResponse(currency)
+            .applySchedulers()
+            .applySubscribeActions()
+            .delay(1, TimeUnit.SECONDS)
+            .repeatUntil {
+                val isGood = currency != baseCurrency
+                isGood
+            }
+            .subscribe(
+                { response ->
+                    view.onDataLoadedSuccess(response)
+                },
+                { throwable ->
+                    view.onDataLoadedFailure(throwable)
+                }
+            )
+
+        subscriptions.add(disposable)
     }
 }
