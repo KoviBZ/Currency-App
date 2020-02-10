@@ -1,12 +1,9 @@
 package com.currencyapp.ui.main.presenter
 
 import com.currencyapp.network.utils.BaseSchedulerProvider
-import com.currencyapp.network.utils.SchedulerProvider
 import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(
@@ -20,11 +17,10 @@ class MainPresenter(
         this.baseCurrency = currency
 
         val disposable = model.retrieveCurrencyResponse(currency)
-            .applySchedulers()
             .delay(1, TimeUnit.SECONDS)
+            .applySchedulers()
             .repeatUntil {
-                val isGood = currency != baseCurrency
-                isGood
+                currency != baseCurrency
             }
             .subscribe(
                 { response ->
@@ -56,9 +52,9 @@ class MainPresenter(
         val currency = baseCurrency
 
         val disposable = model.retrieveCurrencyResponse(currency)
+            .delay(1, TimeUnit.SECONDS)
             .applySchedulers()
             .applySubscribeActions()
-            .delay(1, TimeUnit.SECONDS)
             .repeatUntil {
                 val isGood = currency != baseCurrency
                 isGood

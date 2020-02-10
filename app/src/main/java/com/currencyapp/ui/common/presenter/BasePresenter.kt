@@ -2,6 +2,7 @@ package com.currencyapp.ui.common.presenter
 
 import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.ui.common.view.BaseView
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 
@@ -20,6 +21,12 @@ open class BasePresenter<T: BaseView>(
 
     fun detachView() {
         subscriptions.clear()
+    }
+
+    fun <RESPONSE> Observable<RESPONSE>.applySchedulers(): Observable<RESPONSE> {
+        return this
+            .subscribeOn(schedulerProvider.io())
+            .observeOn(schedulerProvider.ui())
     }
 
     fun <RESPONSE> Single<RESPONSE>.applySchedulers(): Single<RESPONSE> {

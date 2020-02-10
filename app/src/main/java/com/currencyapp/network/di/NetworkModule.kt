@@ -21,7 +21,6 @@ class NetworkModule {
         httpClient
             .connectTimeout(5, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
-//            .addInterceptor()
 
         val retrofit = Retrofit.Builder()
             .baseUrl(HOST)

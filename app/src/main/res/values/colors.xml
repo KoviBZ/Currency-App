@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="error_button_label">#000000</color>
-    <color name="error_button_text">#202020</color>
+    <color name="retry_button_active">#202020</color>
+    <color name="retry_button_inactive">#808080</color>
+    <color name="retry_button_label">#000000</color>
 </resources>

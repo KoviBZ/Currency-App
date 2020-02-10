@@ -24,8 +24,8 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
     @Inject
     lateinit var presenter: MainPresenter
 
-    private val errorContainer: LinearLayout by lazy { findViewById<LinearLayout>(R.id.error_box_container) }
-    private val errorButton: Button by lazy { findViewById<Button>(R.id.error_button) }
+    private val errorContainer: LinearLayout by lazy { findViewById<LinearLayout>(R.id.retry_container) }
+    private val errorButton: Button by lazy { findViewById<Button>(R.id.retry_button) }
     private val recyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.recycler_view) }
     private val progressBar: ProgressBar by lazy { findViewById<ProgressBar>(R.id.progress_bar) }
 
@@ -70,39 +70,22 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
         super.onDestroy()
     }
 
-    //TODO really!
     override fun onDataLoadedSuccess(currencyList: List<RateDto>) {
-        runOnUiThread {
-            errorContainer.visibility = View.GONE
-
-            (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList)
-            Log.d("MainActivity", "succeed")
-        }
+        errorContainer.visibility = View.GONE
+        (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList)
     }
 
-    //TODO really!
     override fun onDataLoadedFailure(error: Throwable) {
-        runOnUiThread {
-            errorButton.isEnabled = true
-
-            errorContainer.visibility = View.VISIBLE
-        }
+        errorButton.isEnabled = true
+        errorContainer.visibility = View.VISIBLE
     }
 
-    //TODO really!
     override fun showProgress() {
-        runOnUiThread {
-            progressBar.visibility = View.VISIBLE
-            Log.d("ProgressBar", "visible")
-        }
+        progressBar.visibility = View.VISIBLE
     }
 
-    //TODO really!
     override fun hideProgress() {
-        runOnUiThread {
-            progressBar.visibility = View.GONE
-            Log.d("ProgressBar", "gone")
-        }
+        progressBar.visibility = View.GONE
     }
 
     override fun onTextChanged(currency: String, changedMultiplier: Double) {
