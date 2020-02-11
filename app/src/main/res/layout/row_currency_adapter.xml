@@ -17,8 +17,8 @@
         android:id="@+id/currency_code_tv"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:paddingStart="16dp"
-        android:textColor="#222222"
+        android:paddingStart="@dimen/padding_standard"
+        android:textColor="@color/list_item_currency_code"
         app:layout_constraintStart_toEndOf="@id/country_iv"
         app:layout_constraintTop_toTopOf="@id/country_iv" />
 
@@ -26,8 +26,8 @@
         android:id="@+id/currency_name_tv"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:paddingStart="16dp"
-        android:textColor="#aaaaaa"
+        android:paddingStart="@dimen/padding_standard"
+        android:textColor="@color/list_item_currency_name"
         app:layout_constraintBottom_toBottomOf="@id/country_iv"
         app:layout_constraintStart_toEndOf="@id/country_iv"
         app:layout_constraintTop_toBottomOf="@id/currency_code_tv" />
@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical|end"
         android:inputType="numberDecimal"
-        android:textColor="#000000"
+        android:textColor="@color/list_item_input_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

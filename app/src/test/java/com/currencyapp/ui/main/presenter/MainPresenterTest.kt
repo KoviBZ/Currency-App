@@ -48,6 +48,7 @@ class MainPresenterTest : Spek({
                         list
                     )
                 )
+                given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
 
                 presenter.retrieveCurrencyResponse(TEST_CURRENCY)
             }
@@ -67,6 +68,7 @@ class MainPresenterTest : Spek({
                         errorResponse
                     )
                 )
+                given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
 
                 presenter.retrieveCurrencyResponse(TEST_CURRENCY)
             }

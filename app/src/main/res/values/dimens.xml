@@ -1,9 +1,8 @@
 <resources>
-    <dimen name="retry_box_padding">16dp</dimen>
     <dimen name="retry_button_corner">15dp</dimen>
     <dimen name="retry_button_min_width">240dp</dimen>
 
-    <dimen name="recycler_view_padding">16dp</dimen>
+    <dimen name="padding_standard">16dp</dimen>
 
     <dimen name="row_height">72dp</dimen>
     <dimen name="row_image_size">40dp</dimen>

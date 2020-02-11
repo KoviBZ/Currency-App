@@ -11,6 +11,14 @@ class DefaultMainModel(
     private val mapper: Mapper<Map.Entry<String, Double>, RateDto>
 ) : MainModel {
 
+    private var baseCurrency: String = ""
+
+    override fun setBaseCurrency(currency: String) {
+        this.baseCurrency = currency
+    }
+
+    override fun getBaseCurrency(): String = baseCurrency
+
     override fun retrieveCurrencyResponse(currency: String): Single<List<RateDto>> {
         return currencyApi.getCurrencies(currency)
             .map { response ->

@@ -100,7 +100,7 @@ class CurrencyAdapter(
                     val changedString = changedText.toString()
 
                     (currencyValueEditText.isFocused).let {
-                        multiplier = if(changedString.isNotEmpty() || changedString != ".") {
+                        multiplier = if(changedString.isNotEmpty() && changedString != ".") {
                             changedString.toDouble()
                         } else {
                             0.0

@@ -13,16 +13,14 @@ class MainPresenter(
     private val model: MainModel
 ) : BasePresenter<MainView>(schedulerProvider) {
 
-    private var baseCurrency = ""
-
     fun retrieveCurrencyResponse(currency: String) {
-        this.baseCurrency = currency
+        model.setBaseCurrency(currency)
 
         val disposable = model.retrieveCurrencyResponse(currency)
             .delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS)
             .applySchedulers()
             .repeatUntil {
-                currency != baseCurrency
+                currency != model.getBaseCurrency()
             }
             .subscribe(
                 { response ->
@@ -41,7 +39,7 @@ class MainPresenter(
     }
 
     fun onItemMoved(itemOnTop: RateDto) {
-        baseCurrency = itemOnTop.key
+        model.setBaseCurrency(itemOnTop.key)
         subscriptions.clear()
 
         retrieveCurrencyResponse(itemOnTop.key)
@@ -49,20 +47,19 @@ class MainPresenter(
 
     fun restartSubscription() {
         if (subscriptions.size() == 0) {
-            retrieveCurrencyResponse(baseCurrency)
+            retrieveCurrencyResponse(model.getBaseCurrency())
         }
     }
 
     fun retry() {
-        val currency = baseCurrency
+        val currency = model.getBaseCurrency()
 
         val disposable = model.retrieveCurrencyResponse(currency)
             .delay(1, TimeUnit.SECONDS)
             .applySchedulers()
             .applySubscribeActions()
             .repeatUntil {
-                val isGood = currency != baseCurrency
-                isGood
+                currency != model.getBaseCurrency()
             }
             .subscribe(
                 { response ->
