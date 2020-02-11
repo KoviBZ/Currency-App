@@ -15,10 +15,11 @@ import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
 import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
 import com.currencyapp.utils.Constants
+import com.currencyapp.utils.ItemMovedCallback
 import com.currencyapp.utils.TextChangedCallback
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
+class MainActivity : AppCompatActivity(), MainView, TextChangedCallback, ItemMovedCallback {
 
     @Inject
     lateinit var presenter: MainPresenter
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
         recyclerView.layoutManager = LinearLayoutManager(this)
         this.adapter = CurrencyAdapter(
             applicationContext,
+            this,
             this
         )
         recyclerView.adapter = this.adapter
@@ -79,19 +81,23 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
         errorContainer.visibility = View.VISIBLE
     }
 
+    override fun updateRates(changedMultiplier: Double) {
+        this.adapter.updateRates(changedMultiplier)
+    }
+
+    override fun onTextChanged(changedMultiplier: Double) {
+        presenter.onTextChanged(changedMultiplier)
+    }
+
+    override fun onItemMoved(itemOnTop: RateDto) {
+        presenter.onItemMoved(itemOnTop)
+    }
+
     override fun showProgress() {
         progressBar.visibility = View.VISIBLE
     }
 
     override fun hideProgress() {
         progressBar.visibility = View.GONE
-    }
-
-    override fun onTextChanged(currency: String, changedMultiplier: Double) {
-        presenter.onTextChanged(currency, changedMultiplier)
-    }
-
-    override fun updateRates(changedMultiplier: Double) {
-        this.adapter.updateRates(changedMultiplier)
     }
 }

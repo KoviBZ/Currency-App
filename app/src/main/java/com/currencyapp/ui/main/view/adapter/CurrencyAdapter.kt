@@ -13,13 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.Constants
+import com.currencyapp.utils.ItemMovedCallback
 import com.currencyapp.utils.TextChangedCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
 
 class CurrencyAdapter(
     private val context: Context,
-    private val textChangedCallback: TextChangedCallback
+    private val textChangedCallback: TextChangedCallback,
+    private val itemMovedCallback: ItemMovedCallback
 ) : RecyclerView.Adapter<CurrencyAdapter.RateViewHolder>() {
 
     private var currencyList = ArrayList<RateDto>()
@@ -57,7 +59,7 @@ class CurrencyAdapter(
 
         this.multiplierForOffline = 1.0
 
-        notifyItemRangeChanged(1, currencyList.size - 1, multiplier)
+        notifyItemRangeChanged(0, currencyList.size - 1, multiplier)
     }
 
     fun updateRates(newMultiplier: Double) {
@@ -98,12 +100,12 @@ class CurrencyAdapter(
                     val changedString = changedText.toString()
 
                     (currencyValueEditText.isFocused).let {
-                        multiplier = if(changedString.isNotEmpty() && changedString != ".") {
+                        multiplier = if(changedString.isNotEmpty() || changedString != ".") {
                             changedString.toDouble()
                         } else {
                             0.0
                         }
-                        textChangedCallback.onTextChanged(rateDto.key, multiplier)
+                        textChangedCallback.onTextChanged(multiplier)
                     }
                 }
 
@@ -150,12 +152,13 @@ class CurrencyAdapter(
 
                     layoutPosition.takeIf { it != 0 }?.also { currentPosition ->
 
-                        multiplier = currencyValueEditText.text.parseToDouble()
-                        swapMultipliers(currencyList[currentPosition].value)
+                        swapMultipliers(currentPosition)
 
                         currencyList.removeAt(currentPosition).also {
                             currencyList.add(0, it)
                         }
+
+                        itemMovedCallback.onItemMoved(currencyList[0])
 
                         notifyItemMoved(currentPosition, 0)
                     }
@@ -164,8 +167,14 @@ class CurrencyAdapter(
                 }
         }
 
-        private fun swapMultipliers(swappedItemMultiplier: Double) {
-            multiplierForOffline = 1/swappedItemMultiplier
+        private fun swapMultipliers(currentPosition: Int) {
+            multiplier = currencyValueEditText.text.parseToDouble()
+
+            val itemAtCurrentPosition = currencyList[currentPosition]
+            val currentItemName = itemAtCurrentPosition.key
+            currencyRateMap[currentItemName]?.let {
+                multiplierForOffline = 1/(it.value)
+            }
         }
 
         private fun Double.format(): String {

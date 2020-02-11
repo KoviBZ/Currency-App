@@ -1,9 +1,11 @@
 package com.currencyapp.ui.main.presenter
 
+import com.currencyapp.network.entity.RateDto
 import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
+import com.currencyapp.utils.Constants
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(
@@ -17,11 +19,11 @@ class MainPresenter(
         this.baseCurrency = currency
 
         val disposable = model.retrieveCurrencyResponse(currency)
-            .delay(1, TimeUnit.SECONDS)
+            .delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS)
             .applySchedulers()
-//            .repeatUntil {
-//                currency != baseCurrency
-//            }
+            .repeatUntil {
+                currency != baseCurrency
+            }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)
@@ -34,12 +36,15 @@ class MainPresenter(
         subscriptions.add(disposable)
     }
 
-    fun onTextChanged(currency: String, changedMultiplier: Double) {
-        if (currency != baseCurrency) {
-            retrieveCurrencyResponse(currency)
-        }
-
+    fun onTextChanged(changedMultiplier: Double) {
         view.updateRates(changedMultiplier)
+    }
+
+    fun onItemMoved(itemOnTop: RateDto) {
+        baseCurrency = itemOnTop.key
+        subscriptions.clear()
+
+        retrieveCurrencyResponse(itemOnTop.key)
     }
 
     fun restartSubscription() {
