@@ -1,22 +1,21 @@
 package com.currencyapp.ui.main.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
-import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
 import com.currencyapp.network.entity.RateDto
-import com.currencyapp.utils.TextChangedCallback
 import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
+import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
+import com.currencyapp.utils.Constants
+import com.currencyapp.utils.TextChangedCallback
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
         }
 
         presenter.attachView(this)
-        presenter.retrieveCurrencyResponse("EUR") //TODO magic number
+        presenter.retrieveCurrencyResponse(Constants.DEFAULT_CURRENCY)
     }
 
     override fun onStart() {
@@ -72,7 +71,7 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback {
 
     override fun onDataLoadedSuccess(currencyList: List<RateDto>) {
         errorContainer.visibility = View.GONE
-        (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList)
+        (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList as ArrayList<RateDto>)
     }
 
     override fun onDataLoadedFailure(error: Throwable) {

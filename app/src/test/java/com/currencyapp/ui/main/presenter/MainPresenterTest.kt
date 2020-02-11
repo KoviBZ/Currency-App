@@ -34,8 +34,8 @@ class MainPresenterTest : Spek({
     describe("attach view") {
 
         beforeEachTest {
-            (schedulers.io() as TestScheduler).advanceTimeTo(1, TimeUnit.SECONDS)
-            (schedulers.ui() as TestScheduler).advanceTimeTo(1, TimeUnit.SECONDS)
+            (schedulers.io() as TestScheduler).advanceTimeBy(1, TimeUnit.SECONDS)
+            (schedulers.ui() as TestScheduler).advanceTimeBy(1, TimeUnit.SECONDS)
         }
 
         context("request succeeds") {

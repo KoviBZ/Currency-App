@@ -19,9 +19,9 @@ class MainPresenter(
         val disposable = model.retrieveCurrencyResponse(currency)
             .delay(1, TimeUnit.SECONDS)
             .applySchedulers()
-            .repeatUntil {
-                currency != baseCurrency
-            }
+//            .repeatUntil {
+//                currency != baseCurrency
+//            }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)
@@ -37,9 +37,9 @@ class MainPresenter(
     fun onTextChanged(currency: String, changedMultiplier: Double) {
         if (currency != baseCurrency) {
             retrieveCurrencyResponse(currency)
-        } else {
-            view.updateRates(changedMultiplier)
         }
+
+        view.updateRates(changedMultiplier)
     }
 
     fun restartSubscription() {

@@ -2,10 +2,9 @@ package com.currencyapp.ui.main.model
 
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.RateDto
+import com.currencyapp.utils.Constants
 import com.currencyapp.utils.mapper.Mapper
 import io.reactivex.Single
-
-const val BASE_MULTIPLIER = 1.0
 
 class DefaultMainModel(
     private val currencyApi: CurrencyApi,
@@ -19,7 +18,7 @@ class DefaultMainModel(
                 list.add(
                     RateDto(
                         currency,
-                        BASE_MULTIPLIER
+                        Constants.DEFAULT_MULTIPLIER
                     )
                 )
 

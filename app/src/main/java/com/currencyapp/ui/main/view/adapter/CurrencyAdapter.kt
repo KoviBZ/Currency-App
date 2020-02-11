@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.network.entity.RateDto
+import com.currencyapp.utils.Constants
 import com.currencyapp.utils.TextChangedCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
@@ -24,7 +25,8 @@ class CurrencyAdapter(
     private var currencyList = ArrayList<RateDto>()
     private var currencyRateMap = HashMap<String, RateDto>()
 
-    private var multiplier: Double = 100.0
+    private var multiplier: Double = Constants.DEFAULT_MULTIPLIER
+    private var multiplierForOffline: Double = Constants.DEFAULT_MULTIPLIER
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RateViewHolder {
         return RateViewHolder(
@@ -44,14 +46,16 @@ class CurrencyAdapter(
         return currencyRateMap[currencyList[position].key]
     }
 
-    fun setItemsList(newList: List<RateDto>) {
+    fun setItemsList(newList: ArrayList<RateDto>) {
         if (currencyList.isEmpty()) {
             currencyList.addAll(newList)
         }
 
         for (currency in newList) {
-            currencyRateMap[currency.key] = (currency)
+            currencyRateMap[currency.key] = currency
         }
+
+        this.multiplierForOffline = 1.0
 
         notifyItemRangeChanged(1, currencyList.size - 1, multiplier)
     }
@@ -93,8 +97,12 @@ class CurrencyAdapter(
                 override fun afterTextChanged(changedText: Editable?) {
                     val changedString = changedText.toString()
 
-                    if (currencyValueEditText.isFocused && changedString.isNotEmpty()) {
-                        multiplier = changedString.toDouble()
+                    (currencyValueEditText.isFocused).let {
+                        multiplier = if(changedString.isNotEmpty() && changedString != ".") {
+                            changedString.toDouble()
+                        } else {
+                            0.0
+                        }
                         textChangedCallback.onTextChanged(rateDto.key, multiplier)
                     }
                 }
@@ -120,8 +128,7 @@ class CurrencyAdapter(
 
             // If the EditText holds the focus, we don't change the value
             if (!currencyValueEditText.isFocused) {
-                val formatter = DecimalFormat("#0.00")
-                currencyValueEditText.setText(formatter.format(rateDto.value * multiplier).toString())
+                currencyValueEditText.setText((rateDto.value * multiplier * multiplierForOffline).format())
             }
         }
 
@@ -132,8 +139,7 @@ class CurrencyAdapter(
             currencyCodeTextView.text = rateDto.key
             currencyNameTextView.text = currencyObj.name
 
-            val formatter = DecimalFormat("#0.00")
-            currencyValueEditText.setText(formatter.format(rateDto.value * multiplier))
+            currencyValueEditText.setText((rateDto.value * multiplier).format())
             currencyValueEditText.onFocusChangeListener =
                 View.OnFocusChangeListener { _, hasFocus ->
                     //If view lost focus, we do nothing
@@ -144,6 +150,9 @@ class CurrencyAdapter(
 
                     layoutPosition.takeIf { it != 0 }?.also { currentPosition ->
 
+                        multiplier = currencyValueEditText.text.parseToDouble()
+                        swapMultipliers(currencyList[currentPosition].value)
+
                         currencyList.removeAt(currentPosition).also {
                             currencyList.add(0, it)
                         }
@@ -153,6 +162,19 @@ class CurrencyAdapter(
 
                     currencyValueEditText.addTextChangedListener(textWatcher)
                 }
+        }
+
+        private fun swapMultipliers(swappedItemMultiplier: Double) {
+            multiplierForOffline = 1/swappedItemMultiplier
+        }
+
+        private fun Double.format(): String {
+            val formatter = DecimalFormat("#0.00")
+            return formatter.format(this)
+        }
+
+        private fun Editable.parseToDouble(): Double {
+            return this.toString().toDouble()
         }
     }
 }
