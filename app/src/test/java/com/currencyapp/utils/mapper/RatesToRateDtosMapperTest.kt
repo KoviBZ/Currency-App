@@ -12,19 +12,18 @@ class RatesToRateDtosMapperTest : Spek({
 
         val map = HashMap<String, Double>()
         map["PLN"] = 3.78
-
-        var item: RateDto
+        lateinit var item: RateDto
 
         beforeEachTest {
             item = mapper.map(map.entries.first())
         }
 
-//        it("item name should match entry key") {
-//            assert(item.key == map.keys.first())
-//        }
-//
-//        it("item name should match entry key") {
-//            assert(item.value == map[item.key])
-//        }
+        it("item name should match entry key") {
+            assert(item.key == map.keys.first())
+        }
+
+        it("item value should match entry value") {
+            assert(item.value == map[item.key])
+        }
     }
 })

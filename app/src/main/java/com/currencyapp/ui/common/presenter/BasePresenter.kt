@@ -1,5 +1,6 @@
 package com.currencyapp.ui.common.presenter
 
+import androidx.annotation.VisibleForTesting
 import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.ui.common.view.BaseView
 import io.reactivex.Single
@@ -11,7 +12,8 @@ open class BasePresenter<T: BaseView>(
 
     protected lateinit var view: T
 
-    protected lateinit var subscriptions: CompositeDisposable
+    @VisibleForTesting
+    lateinit var subscriptions: CompositeDisposable
 
     fun attachView(view: T) {
         this.view = view

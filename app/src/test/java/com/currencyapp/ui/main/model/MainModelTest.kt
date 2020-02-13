@@ -4,6 +4,7 @@ import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.CurrencyResponse
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.mapper.Mapper
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Single
@@ -26,13 +27,17 @@ class MainModelTest : Spek({
 
         beforeEachTest {
             given(api.getCurrencies(anyString())).willReturn(Single.just(apiResponse))
-//            given(mapper.map(any())).willReturn(mock(RateDto::class.java))
+            given(mapper.map(any())).willReturn(RateDto("example", 21.21))
 
             model.retrieveCurrencyResponse(anyString()).subscribe(observer)
         }
 
         it("should complete") {
             observer.assertComplete()
+        }
+
+        it("should return same amount of items as map has entities") {
+            observer.assertValueCount(apiResponse.rates.size)
         }
     }
 })

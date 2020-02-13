@@ -41,41 +41,22 @@ class MainPresenterTest : Spek({
                 given(model.retrieveCurrencyResponse(anyString())).willReturn(
                     Single.just(response)
                 )
+
+                presenter.retrieveCurrencyResponse()
             }
 
-            context("and base currency didn't change") {
-                beforeEachTest {
-                    given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
-
-                    presenter.retrieveCurrencyResponse(TEST_CURRENCY)
-                }
-
-                it("should call on data loaded success") {
-                    verify(view).onDataLoadedSuccess(response)
-                }
-
-                it("should call on data loaded success") {
-                    verify(view).onDataLoadedSuccess(response)
-                }
+            it("should call on data loaded success") {
+                verify(view).onDataLoadedSuccess(response)
             }
 
-            context("and base currency changed") {
-                beforeEachTest {
-                    given(model.getBaseCurrency()).willReturn("somethingElse")
-
-                    presenter.retrieveCurrencyResponse(TEST_CURRENCY)
-                }
-
-                //TODO
-
-                it("should call on data loaded success") {
-                    verify(view).onDataLoadedSuccess(response)
-                }
-
-                it("should call on data loaded success") {
-                    verifyNoMoreInteractions(view)
-                }
+            it("should call on data loaded success") {
+                verify(view).onDataLoadedSuccess(response)
             }
+
+            it("should call on data loaded success") {
+                assert(presenter.subscriptions.size() != 0)
+            }
+
         }
 
         context("request returns error") {
@@ -86,7 +67,6 @@ class MainPresenterTest : Spek({
                 given(model.retrieveCurrencyResponse(anyString())).willReturn(
                     Single.error(errorResponse)
                 )
-                given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
 
                 presenter.retrieveCurrencyResponse(TEST_CURRENCY)
             }
@@ -148,6 +128,7 @@ class MainPresenterTest : Spek({
                     Single.just(response)
                 )
                 given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
+                presenter.subscriptions.add(mock())
 
                 presenter.restartSubscription()
             }
