@@ -5,12 +5,12 @@ import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.network.utils.TestSchedulerProvider
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
 import io.reactivex.Single
-import org.mockito.BDDMockito.given
-import org.mockito.BDDMockito.verifyZeroInteractions
-import org.mockito.Matchers.anyString
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
+import org.mockito.ArgumentMatchers.anyString
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
@@ -19,10 +19,10 @@ const val TEST_MULTIPLIER = 13.8
 
 class MainPresenterTest : Spek({
 
-    val view: MainView by memoized { mock(MainView::class.java) }
+    val view: MainView by memoized { mock<MainView>() }
 
     val schedulers: BaseSchedulerProvider by memoized { TestSchedulerProvider() }
-    val model: MainModel by memoized { mock(MainModel::class.java) }
+    val model: MainModel by memoized { mock<MainModel>() }
 
     val presenter by memoized { MainPresenter(schedulers, model) }
 
@@ -53,6 +53,10 @@ class MainPresenterTest : Spek({
                 it("should call on data loaded success") {
                     verify(view).onDataLoadedSuccess(response)
                 }
+
+                it("should call on data loaded success") {
+                    verify(view).onDataLoadedSuccess(response)
+                }
             }
 
             context("and base currency changed") {
@@ -66,6 +70,10 @@ class MainPresenterTest : Spek({
 
                 it("should call on data loaded success") {
                     verify(view).onDataLoadedSuccess(response)
+                }
+
+                it("should call on data loaded success") {
+                    verifyNoMoreInteractions(view)
                 }
             }
         }
@@ -146,7 +154,7 @@ class MainPresenterTest : Spek({
 
             //TODO
             it("should not interact with view") {
-                verifyZeroInteractions(view)
+                verifyNoMoreInteractions(view)
             }
         }
     }

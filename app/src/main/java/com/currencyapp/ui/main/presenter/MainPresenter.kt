@@ -6,7 +6,6 @@ import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import com.currencyapp.utils.Constants
-import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(
@@ -14,11 +13,11 @@ class MainPresenter(
     private val model: MainModel
 ) : BasePresenter<MainView>(schedulerProvider) {
 
+    //no progress bar, as with 1 second interval it would be bad UX
     fun retrieveCurrencyResponse(currency: String = Constants.DEFAULT_CURRENCY) {
         val disposable = model.retrieveCurrencyResponse(currency)
             .applySchedulers()
             .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
-            .repeatUntil { currency != model.getBaseCurrency() }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)
@@ -47,6 +46,7 @@ class MainPresenter(
         }
     }
 
+    //progress bar, as request usually takes more than REQUEST_INTERVAL
     fun retry() {
         val currency = model.getBaseCurrency()
 
@@ -55,7 +55,6 @@ class MainPresenter(
         val disposable = model.retrieveCurrencyResponse(currency)
             .applySchedulers()
             .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
-            .repeatUntil { currency != model.getBaseCurrency() }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)

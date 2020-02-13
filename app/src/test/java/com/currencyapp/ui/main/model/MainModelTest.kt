@@ -1,36 +1,31 @@
-package com.currencyapp.ui.main.presenter
+package com.currencyapp.ui.main.model
 
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.CurrencyResponse
 import com.currencyapp.network.entity.RateDto
-import com.currencyapp.ui.main.model.DefaultMainModel
-import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.utils.mapper.Mapper
-import com.currencyapp.utils.mapper.RatesToRateDtosMapper
+import com.nhaarman.mockitokotlin2.given
+import com.nhaarman.mockitokotlin2.mock
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
-import io.reactivex.subscribers.TestSubscriber
-import org.mockito.BDDMockito.any
-import org.mockito.BDDMockito.given
-import org.mockito.Matchers
-import org.mockito.Mockito.*
+import org.mockito.ArgumentMatchers.anyString
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 class MainModelTest : Spek({
 
-    val api: CurrencyApi by memoized { mock(CurrencyApi::class.java) }
-    val mapper: Mapper<Map.Entry<String, Double>, RateDto> by memoized { RatesToRateDtosMapper() }
+    val api: CurrencyApi by memoized { mock<CurrencyApi>() }
+    val mapper: Mapper<Map.Entry<String, Double>, RateDto> by memoized { mock<Mapper<Map.Entry<String, Double>, RateDto>>() }
 
     val model: MainModel by memoized { DefaultMainModel(api, mapper) }
 
     describe("retrieve currency response") {
 
         val observer = TestObserver<List<RateDto>>()
-        val response = apiResponse()
+        val apiResponse = apiResponse()
 
         beforeEachTest {
-            given(api.getCurrencies(anyString())).willReturn(Single.just(response))
+            given(api.getCurrencies(anyString())).willReturn(Single.just(apiResponse))
 //            given(mapper.map(any())).willReturn(mock(RateDto::class.java))
 
             model.retrieveCurrencyResponse(anyString()).subscribe(observer)
@@ -38,10 +33,6 @@ class MainModelTest : Spek({
 
         it("should complete") {
             observer.assertComplete()
-        }
-
-        it("should return same amount as rates map entries") {
-            observer.assertValueCount(response.rates.size)
         }
     }
 })
@@ -57,6 +48,3 @@ private fun apiResponse(): CurrencyResponse {
         ratesMap
     )
 }
-
-private fun rateDtoItem(key: String, value: Double): RateDto =
-    RateDto(key, value)

@@ -1,6 +1,7 @@
 <resources>
-    <dimen name="retry_button_corner">15dp</dimen>
-    <dimen name="retry_button_min_width">240dp</dimen>
+    <dimen name="retry_button_corner">16dp</dimen>
+    <dimen name="retry_button_height">32dp</dimen>
+    <dimen name="retry_button_width">240dp</dimen>
 
     <dimen name="padding_standard">16dp</dimen>
 

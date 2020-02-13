@@ -4,7 +4,6 @@ import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.Constants
 import com.currencyapp.utils.mapper.Mapper
-import io.reactivex.Observable
 import io.reactivex.Single
 
 class DefaultMainModel(

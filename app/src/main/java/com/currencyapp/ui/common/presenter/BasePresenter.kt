@@ -1,9 +1,7 @@
 package com.currencyapp.ui.common.presenter
 
-import androidx.annotation.VisibleForTesting
 import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.ui.common.view.BaseView
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 
