@@ -12,9 +12,6 @@ interface CurrencyApi {
     fun getCurrencies(
         @Query("base") base: String
     ): Single<CurrencyResponse>
+//    ): Observable<CurrencyResponse>
 
-    @GET("latest")
-    fun getCurrenciesTemp(
-        @Query("base") base: String
-    ): Observable<CurrencyResponse>
 }

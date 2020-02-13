@@ -6,6 +6,7 @@ import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import com.currencyapp.utils.Constants
+import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(
@@ -13,15 +14,11 @@ class MainPresenter(
     private val model: MainModel
 ) : BasePresenter<MainView>(schedulerProvider) {
 
-    fun retrieveCurrencyResponse(currency: String) {
-        model.setBaseCurrency(currency)
-
+    fun retrieveCurrencyResponse(currency: String = Constants.DEFAULT_CURRENCY) {
         val disposable = model.retrieveCurrencyResponse(currency)
-            .delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS)
             .applySchedulers()
-            .repeatUntil {
-                currency != model.getBaseCurrency()
-            }
+            .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
+            .repeatUntil { currency != model.getBaseCurrency() }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)
@@ -39,7 +36,6 @@ class MainPresenter(
     }
 
     fun onItemMoved(itemOnTop: RateDto) {
-        model.setBaseCurrency(itemOnTop.key)
         subscriptions.clear()
 
         retrieveCurrencyResponse(itemOnTop.key)
@@ -54,19 +50,20 @@ class MainPresenter(
     fun retry() {
         val currency = model.getBaseCurrency()
 
+        view.showProgress()
+
         val disposable = model.retrieveCurrencyResponse(currency)
-            .delay(1, TimeUnit.SECONDS)
             .applySchedulers()
-            .applySubscribeActions()
-            .repeatUntil {
-                currency != model.getBaseCurrency()
-            }
+            .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
+            .repeatUntil { currency != model.getBaseCurrency() }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)
+                    view.hideProgress()
                 },
                 { throwable ->
                     view.onDataLoadedFailure(throwable)
+                    view.hideProgress()
                 }
             )
 

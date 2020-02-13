@@ -6,17 +6,16 @@ import com.currencyapp.network.utils.TestSchedulerProvider
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import io.reactivex.Single
-import io.reactivex.internal.schedulers.TrampolineScheduler
-import io.reactivex.schedulers.TestScheduler
 import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.verifyZeroInteractions
 import org.mockito.Matchers.anyString
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.util.concurrent.TimeUnit
 
 const val TEST_CURRENCY = "test"
+const val TEST_MULTIPLIER = 13.8
 
 class MainPresenterTest : Spek({
 
@@ -27,46 +26,57 @@ class MainPresenterTest : Spek({
 
     val presenter by memoized { MainPresenter(schedulers, model) }
 
+    val testItem by memoized { RateDto(TEST_CURRENCY, TEST_MULTIPLIER) }
+    val response: List<RateDto> by memoized { emptyList<RateDto>() }
+
     beforeEachTest {
         presenter.attachView(view)
     }
 
     describe("attach view") {
 
-        beforeEachTest {
-            (schedulers.io() as TestScheduler).advanceTimeBy(1, TimeUnit.SECONDS)
-            (schedulers.ui() as TestScheduler).advanceTimeBy(1, TimeUnit.SECONDS)
-        }
-
-        context("request succeeds") {
-
-            val list = ArrayList<RateDto>()
+        context("request returns success") {
 
             beforeEachTest {
                 given(model.retrieveCurrencyResponse(anyString())).willReturn(
-                    Single.just(
-                        list
-                    )
+                    Single.just(response)
                 )
-                given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
-
-                presenter.retrieveCurrencyResponse(TEST_CURRENCY)
             }
 
-            it("should call on data loaded success") {
-                verify(view).onDataLoadedSuccess(list)
+            context("and base currency didn't change") {
+                beforeEachTest {
+                    given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
+
+                    presenter.retrieveCurrencyResponse(TEST_CURRENCY)
+                }
+
+                it("should call on data loaded success") {
+                    verify(view).onDataLoadedSuccess(response)
+                }
+            }
+
+            context("and base currency changed") {
+                beforeEachTest {
+                    given(model.getBaseCurrency()).willReturn("somethingElse")
+
+                    presenter.retrieveCurrencyResponse(TEST_CURRENCY)
+                }
+
+                //TODO
+
+                it("should call on data loaded success") {
+                    verify(view).onDataLoadedSuccess(response)
+                }
             }
         }
 
-        context("request fails") {
+        context("request returns error") {
 
             val errorResponse = Throwable()
 
             beforeEachTest {
                 given(model.retrieveCurrencyResponse(anyString())).willReturn(
-                    Single.error(
-                        errorResponse
-                    )
+                    Single.error(errorResponse)
                 )
                 given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
 
@@ -76,6 +86,92 @@ class MainPresenterTest : Spek({
             it("should call on data loaded failure") {
                 verify(view).onDataLoadedFailure(errorResponse)
             }
+        }
+    }
+
+    describe("on text changed") {
+
+        beforeEachTest {
+            presenter.onTextChanged(TEST_MULTIPLIER)
+
+            it("should call update rates") {
+                verify(view).updateRates(TEST_MULTIPLIER)
+            }
+        }
+    }
+
+    describe("on item moved") {
+
+        context("and base currency didn't change") {
+            beforeEachTest {
+                given(model.retrieveCurrencyResponse(anyString())).willReturn(
+                    Single.just(response)
+                )
+
+                presenter.onItemMoved(testItem)
+            }
+
+            it("should call on data loaded success") {
+                verify(view).onDataLoadedSuccess(response)
+            }
+        }
+    }
+
+    describe("restart subscription") {
+
+        context("subscriptions are empty") {
+            beforeEachTest {
+                given(model.retrieveCurrencyResponse(anyString())).willReturn(
+                    Single.just(response)
+                )
+                given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
+
+                presenter.restartSubscription()
+            }
+
+            it("should call on data loaded success") {
+                verify(view).onDataLoadedSuccess(response)
+            }
+        }
+
+        context("subscriptions are not empty") {
+            beforeEachTest {
+                given(model.retrieveCurrencyResponse(anyString())).willReturn(
+                    Single.just(response)
+                )
+                given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
+
+                presenter.restartSubscription()
+            }
+
+            //TODO
+            it("should not interact with view") {
+                verifyZeroInteractions(view)
+            }
+        }
+    }
+
+    describe("retry") {
+
+        beforeEachTest {
+            given(model.retrieveCurrencyResponse(anyString())).willReturn(
+                Single.just(response)
+            )
+            given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
+
+            presenter.retry()
+        }
+
+        it("should call on data loaded success") {
+            verify(view).onDataLoadedSuccess(response)
+        }
+
+        it("should call show progress") {
+            verify(view).showProgress()
+        }
+
+        it("should call hide progress") {
+            verify(view).hideProgress()
         }
     }
 })

@@ -2,6 +2,7 @@ package com.currencyapp.network.di
 
 import com.currencyapp.BuildConfig
 import com.currencyapp.network.CurrencyApi
+import com.currencyapp.utils.Constants
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -19,8 +20,8 @@ class NetworkModule {
     fun provideCurrencyApi(): CurrencyApi {
         val httpClient = OkHttpClient.Builder()
         httpClient
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
+            .connectTimeout(Constants.TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(Constants.TIMEOUT, TimeUnit.SECONDS)
 
         val retrofit = Retrofit.Builder()
             .baseUrl(HOST)

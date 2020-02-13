@@ -7,6 +7,7 @@ class Constants {
 
         val DEFAULT_MULTIPLIER = 1.0
 
-        val REQUEST_INTERVAL = 1L
+        val REQUEST_INTERVAL = 2L
+        val TIMEOUT = 5L
     }
 }

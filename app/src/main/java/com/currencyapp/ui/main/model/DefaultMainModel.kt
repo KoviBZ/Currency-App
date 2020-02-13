@@ -4,6 +4,7 @@ import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.Constants
 import com.currencyapp.utils.mapper.Mapper
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class DefaultMainModel(
@@ -13,13 +14,12 @@ class DefaultMainModel(
 
     private var baseCurrency: String = ""
 
-    override fun setBaseCurrency(currency: String) {
-        this.baseCurrency = currency
-    }
-
     override fun getBaseCurrency(): String = baseCurrency
 
+//    override fun retrieveCurrencyResponse(currency: String): Observable<List<RateDto>> {
     override fun retrieveCurrencyResponse(currency: String): Single<List<RateDto>> {
+        baseCurrency = currency
+
         return currencyApi.getCurrencies(currency)
             .map { response ->
                 val list = ArrayList<RateDto>()

@@ -1,12 +1,11 @@
 package com.currencyapp.ui.main.model
 
 import com.currencyapp.network.entity.RateDto
+import io.reactivex.Observable
 import io.reactivex.Single
 
 interface MainModel {
-//    var baseCurrency: String
-
     fun retrieveCurrencyResponse(currency: String): Single<List<RateDto>>
-    fun setBaseCurrency(currency: String)
+//    fun retrieveCurrencyResponse(currency: String): Observable<List<RateDto>>
     fun getBaseCurrency(): String
 }

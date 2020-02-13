@@ -1,5 +1,6 @@
 package com.currencyapp.ui.common.presenter
 
+import androidx.annotation.VisibleForTesting
 import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.ui.common.view.BaseView
 import io.reactivex.Observable
@@ -23,22 +24,10 @@ open class BasePresenter<T: BaseView>(
         subscriptions.clear()
     }
 
-    fun <RESPONSE> Observable<RESPONSE>.applySchedulers(): Observable<RESPONSE> {
-        return this
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
-    }
-
     fun <RESPONSE> Single<RESPONSE>.applySchedulers(): Single<RESPONSE> {
         return this
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())
-    }
-
-    fun <RESPONSE> Single<RESPONSE>.applySubscribeActions(): Single<RESPONSE> {
-        return this
-            .doOnSubscribe { view.showProgress() }
-            .doFinally { view.hideProgress() }
     }
 
     fun clearSubscriptions() {

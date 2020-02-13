@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), MainView, TextChangedCallback, ItemMov
         }
 
         presenter.attachView(this)
-        presenter.retrieveCurrencyResponse(Constants.DEFAULT_CURRENCY)
+        presenter.retrieveCurrencyResponse()
     }
 
     override fun onStart() {
