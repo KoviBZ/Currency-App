@@ -1,6 +1,5 @@
 package com.currencyapp.ui.main.model
 
-import android.util.Log
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.Constants

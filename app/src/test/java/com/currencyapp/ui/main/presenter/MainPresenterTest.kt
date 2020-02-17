@@ -48,15 +48,6 @@ class MainPresenterTest : Spek({
             it("should call on data loaded success") {
                 verify(view).onDataLoadedSuccess(response)
             }
-
-            it("should call on data loaded success") {
-                verify(view).onDataLoadedSuccess(response)
-            }
-
-            it("should call on data loaded success") {
-                assert(presenter.subscriptions.size() != 0)
-            }
-
         }
 
         context("request returns error") {
@@ -88,20 +79,39 @@ class MainPresenterTest : Spek({
         }
     }
 
+    describe("on text changed") {
+
+        val newMultiplier = 12.8
+
+        beforeEachTest {
+            given(model.retrieveCurrencyResponse(anyString())).willReturn(
+                Single.just(response)
+            )
+
+            presenter.onTextChanged(newMultiplier)
+        }
+
+        it("should call update text") {
+            verify(view).updateRates(newMultiplier)
+        }
+    }
+
     describe("on item moved") {
 
-        context("and base currency didn't change") {
-            beforeEachTest {
-                given(model.retrieveCurrencyResponse(anyString())).willReturn(
-                    Single.just(response)
-                )
+        beforeEachTest {
+            given(model.retrieveCurrencyResponse(anyString())).willReturn(
+                Single.just(response)
+            )
 
-                presenter.onItemMoved(testItem)
-            }
+            presenter.onItemMoved(testItem)
+        }
 
-            it("should call on data loaded success") {
-                verify(view).onDataLoadedSuccess(response)
-            }
+        it("should call model retrieve currency response with item key") {
+            verify(model).retrieveCurrencyResponse(testItem.key)
+        }
+
+        it("should call on data loaded success") {
+            verify(view).onDataLoadedSuccess(response)
         }
     }
 
