@@ -16,7 +16,7 @@ class MainPresenter(
     //no progress bar, as with 1 second interval it would be bad UX
     fun retrieveCurrencyResponse(currency: String = Constants.DEFAULT_CURRENCY) {
         val disposable = model.retrieveCurrencyResponse(currency)
-            .applySchedulers()
+            .subscribeOnIo()
             .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
             .subscribe(
                 { response ->
@@ -46,14 +46,14 @@ class MainPresenter(
         }
     }
 
-    //progress bar, as request usually takes more than REQUEST_INTERVAL
+    //progress bar, as request usually takes more than REQUEST_INTERVAL.
     fun retry() {
         val currency = model.getBaseCurrency()
 
         view.showProgress()
 
         val disposable = model.retrieveCurrencyResponse(currency)
-            .applySchedulers()
+            .subscribeOnIo()
             .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
             .subscribe(
                 { response ->

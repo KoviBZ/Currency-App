@@ -48,8 +48,7 @@ private fun apiResponse(): CurrencyResponse {
     ratesMap["PLN"] = 4.32
 
     return CurrencyResponse(
-        "base",
-        "2019-08-09",
+        "USD",
         ratesMap
     )
 }

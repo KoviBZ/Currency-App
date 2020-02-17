@@ -24,7 +24,7 @@ open class BasePresenter<T: BaseView>(
         subscriptions.clear()
     }
 
-    fun <RESPONSE> Single<RESPONSE>.applySchedulers(): Single<RESPONSE> {
+    fun <RESPONSE> Single<RESPONSE>.subscribeOnIo(): Single<RESPONSE> {
         return this
             .subscribeOn(schedulerProvider.io())
             .observeOn(schedulerProvider.ui())

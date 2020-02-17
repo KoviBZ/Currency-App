@@ -1,7 +1,8 @@
 package com.currencyapp.network.entity
 
+import com.google.gson.annotations.SerializedName
+
 data class CurrencyResponse(
-    val base: String,
-    val date: String,
-    val rates: LinkedHashMap<String, Double>
+    @SerializedName("baseCurrency") val baseCurrency: String,
+    @SerializedName("rates") val rates: LinkedHashMap<String, Double>
 )

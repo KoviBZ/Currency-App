@@ -6,6 +6,5 @@ import dagger.Subcomponent
 @Subcomponent(modules = [MainModule::class])
 interface MainComponent {
 
-    //inject
     fun inject(mainActivity: MainActivity)
 }

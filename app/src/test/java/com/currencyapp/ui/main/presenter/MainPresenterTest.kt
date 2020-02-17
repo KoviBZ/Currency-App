@@ -14,7 +14,7 @@ import org.mockito.ArgumentMatchers.anyString
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-const val TEST_CURRENCY = "test"
+const val TEST_CURRENCY = "GBP"
 const val TEST_MULTIPLIER = 13.8
 
 class MainPresenterTest : Spek({
@@ -133,7 +133,6 @@ class MainPresenterTest : Spek({
                 presenter.restartSubscription()
             }
 
-            //TODO
             it("should not interact with view") {
                 verifyNoMoreInteractions(view)
             }

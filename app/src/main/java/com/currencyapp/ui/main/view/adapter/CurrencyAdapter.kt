@@ -19,6 +19,8 @@ import com.currencyapp.utils.callback.TextChangedCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
 
+const val MULTIPLIER_FOR_OFFLINE = 1.0
+
 class CurrencyAdapter(
     private val context: Context,
     private val textChangedCallback: TextChangedCallback,
@@ -58,15 +60,15 @@ class CurrencyAdapter(
             currencyRateMap[currency.key] = currency
         }
 
-        this.multiplierForOffline = 1.0
+        this.multiplierForOffline = MULTIPLIER_FOR_OFFLINE
 
-        notifyItemRangeChanged(0, currencyList.size - 1, multiplier)
+        notifyItemRangeChanged(1, currencyList.size - 1, multiplier)
     }
 
     fun updateRates(newMultiplier: Double) {
         this.multiplier = newMultiplier
 
-        notifyItemRangeChanged(0, currencyList.size - 1, multiplier)
+        notifyItemRangeChanged(1, currencyList.size - 1, multiplier)
     }
 
     override fun onBindViewHolder(holder: RateViewHolder, position: Int) {
@@ -111,7 +113,7 @@ class CurrencyAdapter(
                 }
             }
 
-            //"Temporary" workaround, but I gave up here and I'm not very proud of it
+            //"Temporary" workaround, but I gave up here. I'm not very proud of it
             if (tag != rateDto.key) {
                 initView(rateDto, textWatcher)
                 this.tag = rateDto.key

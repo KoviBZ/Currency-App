@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="retry_button_edge">2dp</dimen>
     <dimen name="retry_button_corner">16dp</dimen>
     <dimen name="retry_button_height">32dp</dimen>
     <dimen name="retry_button_width">240dp</dimen>

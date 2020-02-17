@@ -19,15 +19,15 @@ class NetworkModule {
     @Provides
     fun provideCurrencyApi(): CurrencyApi {
         val httpClient = OkHttpClient.Builder()
-        httpClient
             .connectTimeout(Constants.TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(Constants.TIMEOUT, TimeUnit.SECONDS)
+            .build()
 
         val retrofit = Retrofit.Builder()
             .baseUrl(HOST)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .client(httpClient.build())
+            .client(httpClient)
             .build()
 
         return retrofit.create(CurrencyApi::class.java)

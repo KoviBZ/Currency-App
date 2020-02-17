@@ -13,9 +13,13 @@ android {
         versionCode 1
         versionName "1.0"
 
-        buildConfigField 'String', 'BASE_URL', '"https://revolut.duckdns.org/"'
+        buildConfigField 'String', 'BASE_URL', '"https://hiring.revolut.codes/api/android/"'
     }
 
+    /* I need to clarify this:
+       This is keystore to test release variant. If it would have been keystore for Google Play,
+       I wouldn't put it in repository
+    */
     signingConfigs {
         release {
             storeFile file("release_keystore.jks")

@@ -6,7 +6,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class ApplicationModule() {
+class ApplicationModule {
 
     @Provides
     fun provideSchedulerProvider(): BaseSchedulerProvider {
