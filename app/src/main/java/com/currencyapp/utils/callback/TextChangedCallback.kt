@@ -1,4 +1,4 @@
-package com.currencyapp.utils
+package com.currencyapp.utils.callback
 
 interface TextChangedCallback {
 

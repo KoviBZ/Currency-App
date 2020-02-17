@@ -15,11 +15,13 @@ import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
 import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
-import com.currencyapp.utils.ItemMovedCallback
-import com.currencyapp.utils.TextChangedCallback
+import com.currencyapp.utils.callback.ItemMovedCallback
+import com.currencyapp.utils.callback.TextChangedCallback
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), MainView, TextChangedCallback, ItemMovedCallback {
+class MainActivity : AppCompatActivity(), MainView,
+    TextChangedCallback,
+    ItemMovedCallback {
 
     @Inject
     lateinit var presenter: MainPresenter

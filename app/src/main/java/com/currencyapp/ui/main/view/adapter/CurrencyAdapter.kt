@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.Constants
-import com.currencyapp.utils.ItemMovedCallback
-import com.currencyapp.utils.TextChangedCallback
+import com.currencyapp.utils.AfterChangeTextWatcher
+import com.currencyapp.utils.callback.ItemMovedCallback
+import com.currencyapp.utils.callback.TextChangedCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
 
@@ -91,16 +92,16 @@ class CurrencyAdapter(
         private val currencyNameTextView by lazy { view.findViewById<TextView>(R.id.currency_name_tv) }
         private val currencyValueEditText by lazy { view.findViewById<EditText>(R.id.currency_value_et) }
 
-        private var symbol = ""
+        private var tag = ""
 
         fun bind(rateDto: RateDto) {
 
-            val textWatcher = object : TextWatcher {
+            val textWatcher = object : AfterChangeTextWatcher() {
                 override fun afterTextChanged(changedText: Editable?) {
                     val changedString = changedText.toString()
 
                     (currencyValueEditText.isFocused).let {
-                        multiplier = if(changedString.isNotEmpty() && changedString != ".") {
+                        multiplier = if (changedString.isNotEmpty() && changedString != Constants.SEPARATOR) {
                             changedString.toDouble()
                         } else {
                             0.0
@@ -108,24 +109,12 @@ class CurrencyAdapter(
                         textChangedCallback.onTextChanged(multiplier)
                     }
                 }
-
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {
-                    //intentionally left empty
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    //intentionally left empty
-                }
             }
 
-            if (symbol != rateDto.key) {
+            //"Temporary" workaround, but I gave up here and I'm not very proud of it
+            if (tag != rateDto.key) {
                 initView(rateDto, textWatcher)
-                this.symbol = rateDto.key
+                this.tag = rateDto.key
             }
 
             // If the EditText holds the focus, we don't change the value
@@ -173,12 +162,12 @@ class CurrencyAdapter(
             val itemAtCurrentPosition = currencyList[currentPosition]
             val currentItemName = itemAtCurrentPosition.key
             currencyRateMap[currentItemName]?.let {
-                multiplierForOffline = 1/(it.value)
+                multiplierForOffline = 1 / (it.value)
             }
         }
 
         private fun Double.format(): String {
-            val formatter = DecimalFormat("#0.00")
+            val formatter = DecimalFormat(Constants.DECIMAL_PATTERN)
             return formatter.format(this)
         }
 

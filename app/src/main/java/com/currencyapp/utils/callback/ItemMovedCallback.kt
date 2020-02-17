@@ -1,4 +1,4 @@
-package com.currencyapp.utils
+package com.currencyapp.utils.callback
 
 import com.currencyapp.network.entity.RateDto
 

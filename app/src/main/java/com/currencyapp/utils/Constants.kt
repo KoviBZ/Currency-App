@@ -4,6 +4,8 @@ class Constants {
 
     companion object {
         val DEFAULT_CURRENCY = "EUR"
+        val SEPARATOR = "."
+        val DECIMAL_PATTERN = "#0.00"
 
         val DEFAULT_MULTIPLIER = 1.0
 
