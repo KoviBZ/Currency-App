@@ -15,6 +15,7 @@ import com.currencyapp.network.entity.RateDto
 import com.currencyapp.utils.Constants
 import com.currencyapp.utils.AfterChangeTextWatcher
 import com.currencyapp.utils.callback.ItemMovedCallback
+import com.currencyapp.utils.callback.OfflineCallback
 import com.currencyapp.utils.callback.TextChangedCallback
 import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
@@ -24,7 +25,8 @@ const val MULTIPLIER_FOR_OFFLINE = 1.0
 class CurrencyAdapter(
     private val context: Context,
     private val textChangedCallback: TextChangedCallback,
-    private val itemMovedCallback: ItemMovedCallback
+    private val itemMovedCallback: ItemMovedCallback,
+    private val offlineCallback: OfflineCallback
 ) : RecyclerView.Adapter<CurrencyAdapter.RateViewHolder>() {
 
     private var currencyList = ArrayList<RateDto>()
@@ -69,6 +71,14 @@ class CurrencyAdapter(
         this.multiplier = newMultiplier
 
         notifyItemRangeChanged(1, currencyList.size - 1, multiplier)
+    }
+
+    fun manageOfflineData() {
+        if(currencyList.size == 0) {
+            offlineCallback.getOfflineData()
+        } else {
+            offlineCallback.saveDataForOfflineMode(currencyList)
+        }
     }
 
     override fun onBindViewHolder(holder: RateViewHolder, position: Int) {

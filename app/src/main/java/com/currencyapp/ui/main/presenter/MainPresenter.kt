@@ -6,6 +6,7 @@ import com.currencyapp.ui.common.presenter.BasePresenter
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
 import com.currencyapp.utils.Constants
+import com.currencyapp.utils.NoOfflineDataError
 import java.util.concurrent.TimeUnit
 
 class MainPresenter(
@@ -16,8 +17,13 @@ class MainPresenter(
     //no progress bar, as with 1 second interval it would be bad UX
     fun retrieveCurrencyResponse(currency: String = Constants.DEFAULT_CURRENCY) {
         val disposable = model.retrieveCurrencyResponse(currency)
-            .subscribeOnIo()
-            .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
+            .applyDefaultIOSchedulers()
+            .repeatWhen { completed ->
+                completed.delay(
+                    Constants.REQUEST_INTERVAL,
+                    TimeUnit.SECONDS
+                )
+            }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)
@@ -40,6 +46,33 @@ class MainPresenter(
         retrieveCurrencyResponse(itemOnTop.key)
     }
 
+    fun saveDataForOfflineMode(list: List<RateDto>) {
+        val disposable = model.saveDataForOfflineMode(list)
+            .applyDefaultIOSchedulers()
+            .subscribe()
+
+        subscriptions.add(disposable)
+    }
+
+    fun getOfflineData() {
+        val disposable = model.getOfflineData()
+            .applyDefaultIOSchedulers()
+            .subscribe(
+                { response ->
+                    if (response.isEmpty()) {
+                        view.onDataLoadedFailure(NoOfflineDataError())
+                    } else {
+                        view.onOfflineDataLoadedSuccess(response)
+                    }
+                },
+                { error ->
+                    view.onDataLoadedFailure(error)
+                }
+            )
+
+        subscriptions.add(disposable)
+    }
+
     fun restartSubscription() {
         if (subscriptions.size() == 0) {
             retrieveCurrencyResponse(model.getBaseCurrency())
@@ -53,8 +86,13 @@ class MainPresenter(
         view.showProgress()
 
         val disposable = model.retrieveCurrencyResponse(currency)
-            .subscribeOnIo()
-            .repeatWhen { completed -> completed.delay(Constants.REQUEST_INTERVAL, TimeUnit.SECONDS) }
+            .applyDefaultIOSchedulers()
+            .repeatWhen { completed ->
+                completed.delay(
+                    Constants.REQUEST_INTERVAL,
+                    TimeUnit.SECONDS
+                )
+            }
             .subscribe(
                 { response ->
                     view.onDataLoadedSuccess(response)

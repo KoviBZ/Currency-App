@@ -7,6 +7,8 @@ interface MainView: BaseView {
 
     fun onDataLoadedSuccess(currencyList: List<RateDto>)
 
+    fun onOfflineDataLoadedSuccess(currencyList: List<RateDto>)
+
     fun onDataLoadedFailure(error: Throwable)
 
     fun updateRates(changedMultiplier: Double)

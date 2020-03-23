@@ -1,6 +1,7 @@
 package com.currencyapp.ui.main.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -15,13 +16,16 @@ import com.currencyapp.ui.main.di.MainModule
 import com.currencyapp.ui.main.presenter.MainPresenter
 import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
 import com.currencyapp.utils.callback.ItemMovedCallback
+import com.currencyapp.utils.callback.OfflineCallback
 import com.currencyapp.utils.callback.TextChangedCallback
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(),
     MainView,
     TextChangedCallback,
-    ItemMovedCallback {
+    ItemMovedCallback,
+    OfflineCallback
+{
 
     @Inject
     lateinit var presenter: MainPresenter
@@ -45,7 +49,8 @@ class MainActivity : AppCompatActivity(),
         this.adapter = CurrencyAdapter(
             applicationContext,
             this,
-            this
+            this,
+             this
         )
         recyclerView.adapter = this.adapter
 
@@ -76,13 +81,22 @@ class MainActivity : AppCompatActivity(),
     override fun onDataLoadedSuccess(currencyList: List<RateDto>) {
         errorContainer.visibility = View.GONE
         (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList as ArrayList<RateDto>)
+        //TODO remove
+        Log.d("MainActivity", "Success")
+    }
+
+    override fun onOfflineDataLoadedSuccess(currencyList: List<RateDto>) {
+        (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList as ArrayList<RateDto>)
+        //TODO remove
+        Log.d("MainActivity", "Offline success")
     }
 
     override fun onDataLoadedFailure(error: Throwable) {
+        (recyclerView.adapter as CurrencyAdapter).manageOfflineData()
         errorButton.isEnabled = true
         errorContainer.visibility = View.VISIBLE
         //TODO remove
-        error.printStackTrace()
+        Log.d("MainActivity", "Failure")
     }
 
     override fun updateRates(changedMultiplier: Double) {
@@ -97,11 +111,21 @@ class MainActivity : AppCompatActivity(),
         presenter.onItemMoved(itemOnTop)
     }
 
+    override fun saveDataForOfflineMode(list: List<RateDto>) {
+        presenter.saveDataForOfflineMode(list)
+    }
+
+    override fun getOfflineData() {
+        presenter.getOfflineData()
+    }
+
     override fun showProgress() {
         progressBar.visibility = View.VISIBLE
+        Log.e("Progress", "show")
     }
 
     override fun hideProgress() {
         progressBar.visibility = View.GONE
+        Log.e("Progress", "hide")
     }
 }
