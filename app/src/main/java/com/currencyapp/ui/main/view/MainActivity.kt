@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onDestroy() {
-        presenter.disposeSubscriptions()
+        presenter.detachView()
         super.onDestroy()
     }
 
@@ -86,7 +86,10 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onOfflineDataLoadedSuccess(currencyList: List<RateDto>) {
-        (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList as ArrayList<RateDto>)
+        (recyclerView.adapter as CurrencyAdapter).apply {
+            setItemsList(currencyList as ArrayList<RateDto>)
+            setMultiplierForOffline(currencyList[0].value)
+        }
         //TODO remove
         Log.d("MainActivity", "Offline success")
     }

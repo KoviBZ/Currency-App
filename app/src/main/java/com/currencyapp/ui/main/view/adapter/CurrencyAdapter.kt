@@ -75,10 +75,14 @@ class CurrencyAdapter(
 
     fun manageOfflineData() {
         if(currencyList.size == 0) {
-            offlineCallback.getOfflineData()
+            offlineCallback.getOfflineData() // TODO
         } else {
             offlineCallback.saveDataForOfflineMode(currencyList)
         }
+    }
+
+    fun setMultiplierForOffline(newMultiplier: Double) {
+        this.multiplierForOffline = 1 / newMultiplier
     }
 
     override fun onBindViewHolder(holder: RateViewHolder, position: Int) {

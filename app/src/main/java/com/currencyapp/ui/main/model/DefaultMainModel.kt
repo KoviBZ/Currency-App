@@ -77,6 +77,8 @@ class DefaultMainModel(
                     finalList.add(localMapper.map(item))
                 }
 
+                baseCurrency = finalList[0].key
+
                 finalList
             }
     }

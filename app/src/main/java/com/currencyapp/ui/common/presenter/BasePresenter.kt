@@ -22,7 +22,7 @@ open class BasePresenter<T: BaseView>(
     }
 
     fun detachView() {
-        subscriptions.clear()
+        subscriptions.dispose()
     }
 
     fun <RESPONSE> Single<RESPONSE>.applyDefaultIOSchedulers(): Single<RESPONSE> {
@@ -39,9 +39,5 @@ open class BasePresenter<T: BaseView>(
 
     fun clearSubscriptions() {
         subscriptions.clear()
-    }
-
-    fun disposeSubscriptions() {
-        subscriptions.dispose()
     }
 }
