@@ -5,10 +5,8 @@ import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.network.utils.TestSchedulerProvider
 import com.currencyapp.ui.main.model.MainModel
 import com.currencyapp.ui.main.view.MainView
-import com.nhaarman.mockitokotlin2.given
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyNoMoreInteractions
+import com.currencyapp.utils.NoOfflineDataError
+import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Single
 import org.mockito.ArgumentMatchers.anyString
 import org.spekframework.spek2.Spek
@@ -64,6 +62,52 @@ class MainPresenterTest : Spek({
 
             it("should call on data loaded failure") {
                 verify(view).onDataLoadedFailure(errorResponse)
+            }
+        }
+    }
+
+    describe("get offline data") {
+
+        context("when succeeds") {
+            val rate1 = RateDto("EUR", 1.0)
+            val nonEmptyResponse = listOf(rate1)
+
+            beforeEachTest {
+                given(model.getOfflineData()).willReturn(Single.just(nonEmptyResponse))
+
+                presenter.getOfflineData()
+            }
+
+            it("should call on offline data loaded success") {
+                verify(view).onOfflineDataLoadedSuccess(nonEmptyResponse)
+            }
+        }
+
+        context("when offline data is empty list") {
+            val emptyResponse = emptyList<RateDto>()
+
+            beforeEachTest {
+                given(model.getOfflineData()).willReturn(Single.just(emptyResponse))
+
+                presenter.getOfflineData()
+            }
+
+            it("should return NoOfflineDataError") {
+                verify(view).onDataLoadedFailure(any<NoOfflineDataError>())
+            }
+        }
+
+        context("fails") {
+            val error = IllegalArgumentException("")
+
+            beforeEachTest {
+                given(model.getOfflineData()).willReturn(Single.error(error))
+
+                presenter.getOfflineData()
+            }
+
+            it("should call on data loaded failure") {
+                verify(view).onDataLoadedFailure(error)
             }
         }
     }

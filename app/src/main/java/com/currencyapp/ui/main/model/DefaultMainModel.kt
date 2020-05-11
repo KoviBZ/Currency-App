@@ -12,7 +12,8 @@ import io.reactivex.Single
 class DefaultMainModel(
     private val currencyApi: CurrencyApi,
     private val localDatabase: LocalDatabase,
-    private val mapper: Mapper<Map.Entry<String, Double>, RateDto>
+    private val mapper: Mapper<Map.Entry<String, Double>, RateDto>,
+    private val databaseMapper: Mapper<CurrencyItemRoomDto, RateDto>
 ) : MainModel {
 
     private var baseCurrency: String = ""
@@ -53,7 +54,6 @@ class DefaultMainModel(
             }
 
             list.forEach { item ->
-                //CHANGE TO UPDATE
                 localDatabase.itemDao.insert(localMapper.map(item))
             }
         }
@@ -62,22 +62,16 @@ class DefaultMainModel(
     override fun getOfflineData(): Single<List<RateDto>> {
         return localDatabase.itemDao.getCurrencyItems()
             .map { list ->
-                val localMapper = object : Mapper<CurrencyItemRoomDto, RateDto> {
-                    override fun map(from: CurrencyItemRoomDto): RateDto {
-                        return RateDto(
-                            key = from.name,
-                            value = from.value
-                        )
-                    }
-                }
 
                 val finalList = ArrayList<RateDto>()
 
                 list.forEach { item ->
-                    finalList.add(localMapper.map(item))
+                    finalList.add(databaseMapper.map(item))
                 }
 
-                baseCurrency = finalList[0].key
+                finalList[0].let {
+                    baseCurrency = it.key
+                }
 
                 finalList
             }

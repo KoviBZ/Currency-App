@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit
 class MainPresenter(
     schedulerProvider: BaseSchedulerProvider,
     private val model: MainModel
+//    private val networkResponseMapper: Mapper<Map.Entry<String, Double>, RateDto>,
+//    private val databaseResponseMapper: Mapper<CurrencyItemRoomDto, RateDto>
 ) : BasePresenter<MainView>(schedulerProvider) {
 
     //no progress bar, as with 1 second interval it would be bad UX
@@ -26,6 +28,10 @@ class MainPresenter(
             }
             .subscribe(
                 { response ->
+//                    response.forEach { item ->
+//                        networkResponseMapper.map(item)
+//                    }
+
                     view.onDataLoadedSuccess(response)
                 },
                 { throwable ->

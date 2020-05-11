@@ -1,7 +1,6 @@
 package com.currencyapp.ui.main.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
@@ -81,8 +80,6 @@ class MainActivity : AppCompatActivity(),
     override fun onDataLoadedSuccess(currencyList: List<RateDto>) {
         errorContainer.visibility = View.GONE
         (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList as ArrayList<RateDto>)
-        //TODO remove
-        Log.d("MainActivity", "Success")
     }
 
     override fun onOfflineDataLoadedSuccess(currencyList: List<RateDto>) {
@@ -90,16 +87,12 @@ class MainActivity : AppCompatActivity(),
             setItemsList(currencyList as ArrayList<RateDto>)
             setMultiplierForOffline(currencyList[0].value)
         }
-        //TODO remove
-        Log.d("MainActivity", "Offline success")
     }
 
     override fun onDataLoadedFailure(error: Throwable) {
         (recyclerView.adapter as CurrencyAdapter).manageOfflineData()
         errorButton.isEnabled = true
         errorContainer.visibility = View.VISIBLE
-        //TODO remove
-        Log.d("MainActivity", "Failure")
     }
 
     override fun updateRates(changedMultiplier: Double) {
@@ -124,11 +117,9 @@ class MainActivity : AppCompatActivity(),
 
     override fun showProgress() {
         progressBar.visibility = View.VISIBLE
-        Log.e("Progress", "show")
     }
 
     override fun hideProgress() {
         progressBar.visibility = View.GONE
-        Log.e("Progress", "hide")
     }
 }

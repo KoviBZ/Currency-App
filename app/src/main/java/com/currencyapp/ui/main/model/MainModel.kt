@@ -6,7 +6,9 @@ import io.reactivex.Single
 
 interface MainModel {
     fun retrieveCurrencyResponse(currency: String): Single<List<RateDto>>
+
     fun getBaseCurrency(): String
+
     fun saveDataForOfflineMode(list: List<RateDto>): Completable
     fun getOfflineData(): Single<List<RateDto>>
 }

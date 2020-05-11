@@ -82,7 +82,8 @@ class CurrencyAdapter(
     }
 
     fun setMultiplierForOffline(newMultiplier: Double) {
-        this.multiplierForOffline = 1 / newMultiplier
+        multiplier = newMultiplier
+        multiplierForOffline = 1 / newMultiplier
     }
 
     override fun onBindViewHolder(holder: RateViewHolder, position: Int) {
