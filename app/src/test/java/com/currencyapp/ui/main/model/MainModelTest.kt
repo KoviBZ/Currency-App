@@ -1,10 +1,8 @@
 package com.currencyapp.ui.main.model
 
 import com.currencyapp.localdb.repo.LocalRepository
-import com.currencyapp.network.CurrencyApi
-import com.currencyapp.network.entity.CurrencyResponse
 import com.currencyapp.network.entity.RateDto
-import com.currencyapp.utils.mapper.Mapper
+import com.currencyapp.network.repo.RemoteRepository
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
@@ -18,23 +16,21 @@ import org.spekframework.spek2.style.specification.describe
 
 class MainModelTest : Spek({
 
-    val api: CurrencyApi by memoized { mock<CurrencyApi>() }
+    val remoteRepository: RemoteRepository by memoized { mock<RemoteRepository>() }
     val localRepository: LocalRepository by memoized { mock<LocalRepository>() }
-    val mapper: Mapper<Map.Entry<String, Double>, RateDto> by memoized { mock<Mapper<Map.Entry<String, Double>, RateDto>>() }
 
-    val model: MainModel by memoized { DefaultMainModel(api, localRepository, mapper) }
+    val model: MainModel by memoized { DefaultMainModel(remoteRepository, localRepository) }
 
     describe("retrieve currency response") {
 
         lateinit var observer: TestObserver<List<RateDto>>
         val requestCurrency = "EUR"
-        val apiResponse = apiResponse()
+        val apiResponse = listOf(RateDto("example", 21.21))
 
         beforeEachTest {
             observer = TestObserver<List<RateDto>>()
 
-            given(api.getCurrencies(anyString())).willReturn(Single.just(apiResponse))
-            given(mapper.map(any())).willReturn(RateDto("example", 21.21))
+            given(remoteRepository.getCurrencyResponse(anyString())).willReturn(Single.just(apiResponse))
 
             model.retrieveCurrencyResponse(requestCurrency).subscribe(observer)
         }
@@ -44,11 +40,7 @@ class MainModelTest : Spek({
         }
 
         it("should return amount of items from map + 1 default") {
-            assertEquals(observer.values()[0].size, apiResponse.rates.size + 1)
-        }
-
-        it("should return currency from request as first") {
-            assertEquals(observer.values()[0][0].key, requestCurrency)
+            assertEquals(observer.values()[0].size, apiResponse.size)
         }
     }
 
@@ -59,7 +51,6 @@ class MainModelTest : Spek({
 
         beforeEachTest {
             given(localRepository.insertData(any())).willReturn(Completable.complete())
-            given(mapper.map(any())).willReturn(RateDto("example", 21.21))
 
             model.saveDataForOfflineMode(listToSave).subscribe(observer)
         }
@@ -91,14 +82,3 @@ class MainModelTest : Spek({
         }
     }
 })
-
-private fun apiResponse(): CurrencyResponse {
-    val ratesMap = LinkedHashMap<String, Double>()
-    ratesMap["EUR"] = 1.0
-    ratesMap["PLN"] = 4.32
-
-    return CurrencyResponse(
-        "USD",
-        ratesMap
-    )
-}
