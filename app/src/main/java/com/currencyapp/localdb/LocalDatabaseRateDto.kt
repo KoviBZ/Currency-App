@@ -1,11 +1,11 @@
-package com.currencyapp.localrepo.room
+package com.currencyapp.localdb
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "lastResponse")
-data class CurrencyItemRoomDto(
+data class LocalDatabaseRateDto(
 
     @PrimaryKey
     @ColumnInfo(name = "name")

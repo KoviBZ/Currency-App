@@ -1,4 +1,4 @@
-package com.currencyapp.localrepo.room
+package com.currencyapp.localdb
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -12,14 +12,14 @@ import io.reactivex.Single
 abstract class ItemDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract fun insert(vararg items: CurrencyItemRoomDto)
+    abstract fun insert(vararg items: LocalDatabaseRateDto)
 
     @Update
-    abstract fun update(vararg items: CurrencyItemRoomDto)
+    abstract fun update(vararg items: LocalDatabaseRateDto)
 
     @Delete
-    abstract fun delete(item: CurrencyItemRoomDto)
+    abstract fun delete(item: LocalDatabaseRateDto)
 
     @Query("SELECT * from lastResponse")
-    abstract fun getCurrencyItems(): Single<List<CurrencyItemRoomDto>>
+    abstract fun getCurrencyItems(): Single<List<LocalDatabaseRateDto>>
 }

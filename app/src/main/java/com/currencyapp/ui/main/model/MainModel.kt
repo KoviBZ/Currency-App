@@ -9,6 +9,6 @@ interface MainModel {
 
     fun getBaseCurrency(): String
 
-    fun saveDataForOfflineMode(list: List<RateDto>): Completable
+    fun saveDataForOfflineMode(listToStore: List<RateDto>): Completable
     fun getOfflineData(): Single<List<RateDto>>
 }

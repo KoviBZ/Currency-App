@@ -1,10 +1,10 @@
-package com.currencyapp.localrepo.room
+package com.currencyapp.localdb
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [CurrencyItemRoomDto::class],
+    entities = [LocalDatabaseRateDto::class],
     version = 1
 )
 abstract class LocalDatabase : RoomDatabase() {

@@ -1,7 +1,7 @@
 package com.currencyapp.ui.main.model
 
-import com.currencyapp.localrepo.room.CurrencyItemRoomDto
-import com.currencyapp.localrepo.room.LocalDatabase
+import com.currencyapp.localdb.LocalDatabaseRateDto
+import com.currencyapp.localdb.LocalDatabase
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.CurrencyResponse
 import com.currencyapp.network.entity.RateDto
@@ -21,7 +21,7 @@ class MainModelTest : Spek({
     val api: CurrencyApi by memoized { mock<CurrencyApi>() }
     val localDatabase: LocalDatabase by memoized { mock<LocalDatabase>() }
     val mapper: Mapper<Map.Entry<String, Double>, RateDto> by memoized { mock<Mapper<Map.Entry<String, Double>, RateDto>>() }
-    val databaseMapper: Mapper<CurrencyItemRoomDto, RateDto> by memoized { mock<Mapper<CurrencyItemRoomDto, RateDto>>() }
+    val databaseMapper: Mapper<LocalDatabaseRateDto, RateDto> by memoized { mock<Mapper<LocalDatabaseRateDto, RateDto>>() }
 
     val model: MainModel by memoized { DefaultMainModel(api, localDatabase, mapper, databaseMapper) }
 
@@ -73,7 +73,12 @@ class MainModelTest : Spek({
     describe("get offline data") {
 
         lateinit var observer : TestObserver<List<RateDto>>
-        val databaseResponse = listOf(CurrencyItemRoomDto("example", 21.21))
+        val databaseResponse = listOf(
+            LocalDatabaseRateDto(
+                "example",
+                21.21
+            )
+        )
 
         beforeEachTest {
             observer = TestObserver<List<RateDto>>()
