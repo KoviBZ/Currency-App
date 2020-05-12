@@ -1,17 +1,14 @@
 package com.currencyapp.ui.main.model
 
 import com.currencyapp.localdb.repo.LocalRepository
-import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.RateDto
-import com.currencyapp.utils.Constants
-import com.currencyapp.utils.mapper.Mapper
+import com.currencyapp.network.repo.RemoteRepository
 import io.reactivex.Completable
 import io.reactivex.Single
 
 class DefaultMainModel(
-    private val currencyApi: CurrencyApi,
-    private val localRepository: LocalRepository,
-    private val mapper: Mapper<Map.Entry<String, Double>, RateDto>
+    private val remoteRepository: RemoteRepository,
+    private val localRepository: LocalRepository
 ) : MainModel {
 
     private var baseCurrency: String = ""
@@ -20,23 +17,7 @@ class DefaultMainModel(
 
     override fun retrieveCurrencyResponse(currency: String): Single<List<RateDto>> {
         baseCurrency = currency
-
-        return currencyApi.getCurrencies(currency)
-            .map { response ->
-                val list = ArrayList<RateDto>()
-                list.add(
-                    RateDto(
-                        currency,
-                        Constants.DEFAULT_MULTIPLIER
-                    )
-                )
-
-                response.rates.iterator().forEach {
-                    list.add(mapper.map(it))
-                }
-
-                list
-            }
+        return remoteRepository.getCurrencyResponse(baseCurrency)
     }
 
     override fun saveDataForOfflineMode(listToStore: List<RateDto>): Completable {

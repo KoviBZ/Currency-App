@@ -8,7 +8,7 @@ import com.currencyapp.localdb.mapper.LocalDatabaseMapper
 import com.currencyapp.localdb.repo.LocalDatabaseRepository
 import com.currencyapp.localdb.repo.LocalRepository
 import com.currencyapp.network.entity.RateDto
-import com.currencyapp.utils.mapper.Mapper
+import com.currencyapp.utils.mapper.TwoWayMapper
 import dagger.Module
 import dagger.Provides
 
@@ -18,9 +18,9 @@ class LocalRepoModule {
     @Provides
     fun provideLocalDatabaseRepository(
         localDatabase: LocalDatabase,
-        mapper: Mapper<LocalDatabaseRateDto, RateDto>
+        localDatabaseMapper: TwoWayMapper<LocalDatabaseRateDto, RateDto>
     ): LocalRepository {
-        return LocalDatabaseRepository(localDatabase, mapper)
+        return LocalDatabaseRepository(localDatabase, localDatabaseMapper)
     }
 
     @Provides
@@ -33,7 +33,7 @@ class LocalRepoModule {
     }
 
     @Provides
-    fun provideLocalDatabaseMapper(): Mapper<LocalDatabaseRateDto, RateDto> {
+    fun provideLocalDatabaseMapper(): TwoWayMapper<LocalDatabaseRateDto, RateDto> {
         return LocalDatabaseMapper()
     }
 }

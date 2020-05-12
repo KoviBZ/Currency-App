@@ -1,7 +1,6 @@
 package com.currencyapp.ui.main.model
 
-import com.currencyapp.localdb.LocalDatabaseRateDto
-import com.currencyapp.localdb.LocalDatabase
+import com.currencyapp.localdb.repo.LocalRepository
 import com.currencyapp.network.CurrencyApi
 import com.currencyapp.network.entity.CurrencyResponse
 import com.currencyapp.network.entity.RateDto
@@ -9,6 +8,7 @@ import com.currencyapp.utils.mapper.Mapper
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.given
 import com.nhaarman.mockitokotlin2.mock
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,11 +19,10 @@ import org.spekframework.spek2.style.specification.describe
 class MainModelTest : Spek({
 
     val api: CurrencyApi by memoized { mock<CurrencyApi>() }
-    val localDatabase: LocalDatabase by memoized { mock<LocalDatabase>() }
+    val localRepository: LocalRepository by memoized { mock<LocalRepository>() }
     val mapper: Mapper<Map.Entry<String, Double>, RateDto> by memoized { mock<Mapper<Map.Entry<String, Double>, RateDto>>() }
-    val databaseMapper: Mapper<LocalDatabaseRateDto, RateDto> by memoized { mock<Mapper<LocalDatabaseRateDto, RateDto>>() }
 
-    val model: MainModel by memoized { DefaultMainModel(api, localDatabase, mapper, databaseMapper) }
+    val model: MainModel by memoized { DefaultMainModel(api, localRepository, mapper) }
 
     describe("retrieve currency response") {
 
@@ -59,7 +58,7 @@ class MainModelTest : Spek({
         val listToSave = listOf(RateDto("example", 21.21))
 
         beforeEachTest {
-            given(localDatabase.itemDao).willReturn(mock())
+            given(localRepository.insertData(any())).willReturn(Completable.complete())
             given(mapper.map(any())).willReturn(RateDto("example", 21.21))
 
             model.saveDataForOfflineMode(listToSave).subscribe(observer)
@@ -73,19 +72,12 @@ class MainModelTest : Spek({
     describe("get offline data") {
 
         lateinit var observer : TestObserver<List<RateDto>>
-        val databaseResponse = listOf(
-            LocalDatabaseRateDto(
-                "example",
-                21.21
-            )
-        )
+        val databaseResponse = listOf(RateDto("example", 21.21))
 
         beforeEachTest {
             observer = TestObserver<List<RateDto>>()
 
-            given(localDatabase.itemDao).willReturn(mock())
-            given(localDatabase.itemDao.getCurrencyItems()).willReturn(Single.just(databaseResponse))
-            given(databaseMapper.map(any())).willReturn(RateDto("example", 21.21))
+            given(localRepository.getOfflineData()).willReturn(Single.just(databaseResponse))
 
             model.getOfflineData().subscribe(observer)
         }
