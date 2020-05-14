@@ -1,7 +1,7 @@
-package com.currencyapp.utils.mapper
+package com.currencyapp.network.mapper
 
 import com.currencyapp.network.entity.RateDto
-import com.currencyapp.network.mapper.RatesToRateDtosMapper
+import com.currencyapp.utils.mapper.Mapper
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
