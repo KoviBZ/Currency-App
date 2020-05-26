@@ -1,20 +1,22 @@
-package com.currencyapp.ui.main.presenter
+package com.currencyapp.ui.main.viewmodel
 
+import androidx.lifecycle.MutableLiveData
+import com.currencyapp.network.Resource
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.network.utils.BaseSchedulerProvider
-import com.currencyapp.ui.common.presenter.BasePresenter
+import com.currencyapp.ui.common.viewmodel.BaseViewModel
 import com.currencyapp.ui.main.model.MainModel
-import com.currencyapp.ui.main.view.MainView
 import com.currencyapp.utils.Constants
 import com.currencyapp.utils.NoOfflineDataError
 import java.util.concurrent.TimeUnit
 
-class MainPresenter(
+class MainViewModel(
     schedulerProvider: BaseSchedulerProvider,
     private val model: MainModel
-//    private val networkResponseMapper: Mapper<Map.Entry<String, Double>, RateDto>,
-//    private val databaseResponseMapper: Mapper<CurrencyItemRoomDto, RateDto>
-) : BasePresenter<MainView>(schedulerProvider) {
+) : BaseViewModel(schedulerProvider) {
+
+    private val currencies = MutableLiveData<Resource<List<RateDto>>>()
+    private val multiplier = MutableLiveData<Double>()
 
     //no progress bar, as with 1 second interval it would be bad UX
     fun retrieveCurrencyResponse(currency: String = Constants.DEFAULT_CURRENCY) {
@@ -28,14 +30,10 @@ class MainPresenter(
             }
             .subscribe(
                 { response ->
-//                    response.forEach { item ->
-//                        networkResponseMapper.map(item)
-//                    }
-
-                    view.onDataLoadedSuccess(response)
+                    currencies.postValue(Resource.success(response))
                 },
                 { throwable ->
-                    view.onDataLoadedFailure(throwable)
+                    currencies.postValue(Resource.error(throwable))
                 }
             )
 
@@ -43,7 +41,7 @@ class MainPresenter(
     }
 
     fun onTextChanged(changedMultiplier: Double) {
-        view.updateRates(changedMultiplier)
+        multiplier.postValue(changedMultiplier)
     }
 
     fun onItemMoved(itemOnTop: RateDto) {
@@ -66,13 +64,13 @@ class MainPresenter(
             .subscribe(
                 { response ->
                     if (response.isEmpty()) {
-                        view.onDataLoadedFailure(NoOfflineDataError())
+                        currencies.postValue(Resource.error(NoOfflineDataError()))
                     } else {
-                        view.onOfflineDataLoadedSuccess(response)
+                        currencies.postValue(Resource.success(response))
                     }
                 },
-                { error ->
-                    view.onDataLoadedFailure(error)
+                { throwable ->
+                    currencies.postValue(Resource.error(throwable))
                 }
             )
 
@@ -89,7 +87,7 @@ class MainPresenter(
     fun retry() {
         val currency = model.getBaseCurrency()
 
-        view.showProgress()
+        Resource.loading(null) // showProgress
 
         val disposable = model.retrieveCurrencyResponse(currency)
             .applyDefaultIOSchedulers()
@@ -101,11 +99,11 @@ class MainPresenter(
             }
             .subscribe(
                 { response ->
-                    view.onDataLoadedSuccess(response)
+                    currencies.postValue(Resource.success(response))
                     view.hideProgress()
                 },
                 { throwable ->
-                    view.onDataLoadedFailure(throwable)
+                    currencies.postValue(Resource.error(throwable))
                     view.hideProgress()
                 }
             )

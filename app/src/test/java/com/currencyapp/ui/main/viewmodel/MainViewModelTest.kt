@@ -1,4 +1,4 @@
-package com.currencyapp.ui.main.presenter
+package com.currencyapp.ui.main.viewmodel
 
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.network.utils.BaseSchedulerProvider
@@ -22,14 +22,10 @@ class MainPresenterTest : Spek({
     val schedulers: BaseSchedulerProvider by memoized { TestSchedulerProvider() }
     val model: MainModel by memoized { mock<MainModel>() }
 
-    val presenter by memoized { MainPresenter(schedulers, model) }
+    val viewModel by memoized { MainViewModel(schedulers, model) }
 
     val testItem by memoized { RateDto(TEST_CURRENCY, TEST_MULTIPLIER) }
     val response: List<RateDto> by memoized { emptyList<RateDto>() }
-
-    beforeEachTest {
-        presenter.attachView(view)
-    }
 
     describe("attach view") {
 
@@ -40,7 +36,7 @@ class MainPresenterTest : Spek({
                     Single.just(response)
                 )
 
-                presenter.retrieveCurrencyResponse()
+                viewModel.retrieveCurrencyResponse()
             }
 
             it("should call on data loaded success") {
@@ -57,7 +53,7 @@ class MainPresenterTest : Spek({
                     Single.error(errorResponse)
                 )
 
-                presenter.retrieveCurrencyResponse(TEST_CURRENCY)
+                viewModel.retrieveCurrencyResponse(TEST_CURRENCY)
             }
 
             it("should call on data loaded failure") {
@@ -75,7 +71,7 @@ class MainPresenterTest : Spek({
             beforeEachTest {
                 given(model.getOfflineData()).willReturn(Single.just(nonEmptyResponse))
 
-                presenter.getOfflineData()
+                viewModel.getOfflineData()
             }
 
             it("should call on offline data loaded success") {
@@ -89,7 +85,7 @@ class MainPresenterTest : Spek({
             beforeEachTest {
                 given(model.getOfflineData()).willReturn(Single.just(emptyResponse))
 
-                presenter.getOfflineData()
+                viewModel.getOfflineData()
             }
 
             it("should return NoOfflineDataError") {
@@ -103,7 +99,7 @@ class MainPresenterTest : Spek({
             beforeEachTest {
                 given(model.getOfflineData()).willReturn(Single.error(error))
 
-                presenter.getOfflineData()
+                viewModel.getOfflineData()
             }
 
             it("should call on data loaded failure") {
@@ -115,7 +111,7 @@ class MainPresenterTest : Spek({
     describe("on text changed") {
 
         beforeEachTest {
-            presenter.onTextChanged(TEST_MULTIPLIER)
+            viewModel.onTextChanged(TEST_MULTIPLIER)
 
             it("should call update rates") {
                 verify(view).updateRates(TEST_MULTIPLIER)
@@ -132,7 +128,7 @@ class MainPresenterTest : Spek({
                 Single.just(response)
             )
 
-            presenter.onTextChanged(newMultiplier)
+            viewModel.onTextChanged(newMultiplier)
         }
 
         it("should call update text") {
@@ -147,7 +143,7 @@ class MainPresenterTest : Spek({
                 Single.just(response)
             )
 
-            presenter.onItemMoved(testItem)
+            viewModel.onItemMoved(testItem)
         }
 
         it("should call model retrieve currency response with item key") {
@@ -168,7 +164,7 @@ class MainPresenterTest : Spek({
                 )
                 given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
 
-                presenter.restartSubscription()
+                viewModel.restartSubscription()
             }
 
             it("should call on data loaded success") {
@@ -182,9 +178,9 @@ class MainPresenterTest : Spek({
                     Single.just(response)
                 )
                 given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
-                presenter.subscriptions.add(mock())
+                viewModel.subscriptions.add(mock())
 
-                presenter.restartSubscription()
+                viewModel.restartSubscription()
             }
 
             it("should not interact with view") {
@@ -201,7 +197,7 @@ class MainPresenterTest : Spek({
             )
             given(model.getBaseCurrency()).willReturn(TEST_CURRENCY)
 
-            presenter.retry()
+            viewModel.retry()
         }
 
         it("should call on data loaded success") {

@@ -7,7 +7,7 @@ import com.currencyapp.network.repo.RemoteRepository
 import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.ui.main.model.DefaultMainModel
 import com.currencyapp.ui.main.model.MainModel
-import com.currencyapp.ui.main.presenter.MainPresenter
+import com.currencyapp.ui.main.viewmodel.MainViewModel
 import dagger.Module
 import dagger.Provides
 
@@ -23,7 +23,7 @@ class MainModule {
     fun provideMainPresenter(
         schedulerProvider: BaseSchedulerProvider,
         model: MainModel
-    ): MainPresenter = MainPresenter(schedulerProvider, model)
+    ): MainViewModel = MainViewModel(schedulerProvider, model)
 
     @Provides
     fun provideMainModel(

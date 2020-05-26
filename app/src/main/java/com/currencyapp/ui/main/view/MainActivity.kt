@@ -12,7 +12,7 @@ import com.currencyapp.R
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.ui.app.CurrencyApplication
 import com.currencyapp.ui.main.di.MainModule
-import com.currencyapp.ui.main.presenter.MainPresenter
+import com.currencyapp.ui.main.viewmodel.MainViewModel
 import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
 import com.currencyapp.utils.callback.ItemMovedCallback
 import com.currencyapp.utils.callback.OfflineCallback
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(),
 {
 
     @Inject
-    lateinit var presenter: MainPresenter
+    lateinit var viewModel: MainViewModel
 
     private val errorContainer: LinearLayout by lazy { findViewById<LinearLayout>(R.id.retry_container) }
     private val errorButton: Button by lazy { findViewById<Button>(R.id.retry_button) }
@@ -54,26 +54,26 @@ class MainActivity : AppCompatActivity(),
         recyclerView.adapter = this.adapter
 
         errorButton.setOnClickListener {
-            presenter.retry()
+            viewModel.retry()
             it.isEnabled = false
         }
 
-        presenter.attachView(this)
-        presenter.retrieveCurrencyResponse()
+        viewModel.attachView(this)
+        viewModel.retrieveCurrencyResponse()
     }
 
     override fun onStart() {
         super.onStart()
-        presenter.restartSubscription()
+        viewModel.restartSubscription()
     }
 
     override fun onStop() {
-        presenter.clearSubscriptions()
+        viewModel.clearSubscriptions()
         super.onStop()
     }
 
     override fun onDestroy() {
-        presenter.detachView()
+        viewModel.detachView()
         super.onDestroy()
     }
 
@@ -100,19 +100,19 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onTextChanged(changedMultiplier: Double) {
-        presenter.onTextChanged(changedMultiplier)
+        viewModel.onTextChanged(changedMultiplier)
     }
 
     override fun onItemMoved(itemOnTop: RateDto) {
-        presenter.onItemMoved(itemOnTop)
+        viewModel.onItemMoved(itemOnTop)
     }
 
     override fun saveDataForOfflineMode(list: List<RateDto>) {
-        presenter.saveDataForOfflineMode(list)
+        viewModel.saveDataForOfflineMode(list)
     }
 
     override fun getOfflineData() {
-        presenter.getOfflineData()
+        viewModel.getOfflineData()
     }
 
     override fun showProgress() {

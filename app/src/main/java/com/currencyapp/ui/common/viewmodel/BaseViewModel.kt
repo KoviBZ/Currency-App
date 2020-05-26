@@ -1,25 +1,17 @@
-package com.currencyapp.ui.common.presenter
+package com.currencyapp.ui.common.viewmodel
 
 import androidx.annotation.VisibleForTesting
 import com.currencyapp.network.utils.BaseSchedulerProvider
-import com.currencyapp.ui.common.view.BaseView
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 
-open class BasePresenter<T: BaseView>(
+open class BaseViewModel(
     private val schedulerProvider: BaseSchedulerProvider
 ) {
 
-    protected lateinit var view: T
-
     @VisibleForTesting
-    lateinit var subscriptions: CompositeDisposable
-
-    fun attachView(view: T) {
-        this.view = view
-        subscriptions = CompositeDisposable()
-    }
+    var subscriptions: CompositeDisposable = CompositeDisposable()
 
     fun detachView() {
         subscriptions.dispose()
