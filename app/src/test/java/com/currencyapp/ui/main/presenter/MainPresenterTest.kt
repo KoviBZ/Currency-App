@@ -4,7 +4,6 @@ import com.currencyapp.network.entity.RateDto
 import com.currencyapp.network.utils.BaseSchedulerProvider
 import com.currencyapp.network.utils.TestSchedulerProvider
 import com.currencyapp.ui.main.model.MainModel
-import com.currencyapp.ui.main.view.MainView
 import com.currencyapp.utils.NoOfflineDataError
 import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Single
@@ -22,7 +21,7 @@ class MainPresenterTest : Spek({
     val schedulers: BaseSchedulerProvider by memoized { TestSchedulerProvider() }
     val model: MainModel by memoized { mock<MainModel>() }
 
-    val presenter by memoized { MainPresenter(schedulers, model) }
+    val presenter by memoized { MainViewModel(schedulers, model) }
 
     val testItem by memoized { RateDto(TEST_CURRENCY, TEST_MULTIPLIER) }
     val response: List<RateDto> by memoized { emptyList<RateDto>() }

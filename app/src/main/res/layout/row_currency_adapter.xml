@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/row_height">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/country_iv"
         android:layout_width="@dimen/row_image_size"
         android:layout_height="@dimen/row_image_size"

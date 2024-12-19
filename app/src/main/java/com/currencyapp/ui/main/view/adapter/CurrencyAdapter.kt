@@ -9,15 +9,14 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
 import com.currencyapp.network.entity.RateDto
-import com.currencyapp.utils.Constants
 import com.currencyapp.utils.AfterChangeTextWatcher
+import com.currencyapp.utils.Constants
 import com.currencyapp.utils.callback.ItemMovedCallback
-import com.currencyapp.utils.callback.OfflineCallback
 import com.currencyapp.utils.callback.TextChangedCallback
-import com.mynameismidori.currencypicker.ExtendedCurrency
 import java.text.DecimalFormat
 
 const val MULTIPLIER_FOR_OFFLINE = 1.0
@@ -25,8 +24,7 @@ const val MULTIPLIER_FOR_OFFLINE = 1.0
 class CurrencyAdapter(
     private val context: Context,
     private val textChangedCallback: TextChangedCallback,
-    private val itemMovedCallback: ItemMovedCallback,
-    private val offlineCallback: OfflineCallback
+    private val itemMovedCallback: ItemMovedCallback
 ) : RecyclerView.Adapter<CurrencyAdapter.RateViewHolder>() {
 
     private var currencyList = ArrayList<RateDto>()
@@ -71,19 +69,6 @@ class CurrencyAdapter(
         this.multiplier = newMultiplier
 
         notifyItemRangeChanged(1, currencyList.size - 1, multiplier)
-    }
-
-    fun manageOfflineData() {
-        if(currencyList.size == 0) {
-            offlineCallback.getOfflineData() // TODO
-        } else {
-            offlineCallback.saveDataForOfflineMode(currencyList)
-        }
-    }
-
-    fun setMultiplierForOffline(newMultiplier: Double) {
-        multiplier = newMultiplier
-        multiplierForOffline = 1 / newMultiplier
     }
 
     override fun onBindViewHolder(holder: RateViewHolder, position: Int) {
@@ -141,7 +126,7 @@ class CurrencyAdapter(
         }
 
         private fun initView(rateDto: RateDto, textWatcher: TextWatcher) {
-            val currencyObj = ExtendedCurrency.getCurrencyByISO(rateDto.key)
+            val currencyObj = getCurrencyByISO(rateDto.key)
             countryImageView.setImageResource(currencyObj.flag)
 
             currencyCodeTextView.text = rateDto.key
@@ -191,5 +176,14 @@ class CurrencyAdapter(
         private fun Editable.parseToDouble(): Double {
             return this.toString().toDouble()
         }
+
+        private fun getCurrencyByISO(currencyCode: String): CurrencyObject {
+            return CurrencyObject(currencyCode, R.drawable.ic_launcher_foreground)
+        }
     }
 }
+
+data class CurrencyObject(
+    val name: String,
+    @DrawableRes val flag: Int
+)
