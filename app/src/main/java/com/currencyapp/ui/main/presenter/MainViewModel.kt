@@ -1,80 +1,78 @@
 package com.currencyapp.ui.main.presenter
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.currencyapp.network.entity.RateDto
 import com.currencyapp.network.repo.RemoteRepository
 import com.currencyapp.network.repo.Resource
 import com.currencyapp.utils.Constants
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val repository: RemoteRepository
 ): ViewModel() {
 
-    var currencyUiState: CurrencyUiState by mutableStateOf(CurrencyUiState.Loading)
+    private var job: Job? = null
+
+    var currencyUiState: MutableStateFlow<CurrencyUiState> = MutableStateFlow(CurrencyUiState.Loading)
+        private set
+    var modifierUiState: MutableStateFlow<Double> = MutableStateFlow(1.0)
         private set
 
-    //no progress bar, as with 1 second interval it would be bad UX
-    fun retrieveCurrencyResponse(currency: String = Constants.DEFAULT_CURRENCY) {
-        viewModelScope.launch {
-            repeat(20) {
-                val response = repository.getCurrencyResponse(currency)
+    init {
+        Log.d("ViewModel", "MainViewModel lives")
+    }
 
-                currencyUiState = if (response is Resource.Success) {
-                    CurrencyUiState.Success(response.data)
-                } else {
-                    CurrencyUiState.Error
+    //TODO retry spams error value - fix it!
+    //no progress bar, as with 1 second interval it would be bad UX
+    private fun retrieveCurrencyResponse(currency: String = Constants.DEFAULT_CURRENCY) {
+        job = viewModelScope.launch {
+            while (true) {
+                ensureActive()
+                try {
+                    val response = repository.getCurrencyResponse(currency)
+
+                    currencyUiState.value = if (response is Resource.Success) {
+                        CurrencyUiState.Success(response.data)
+                    } else {
+                        CurrencyUiState.Error
+                    }
+                    delay(1000L)
+                } catch (ex: Exception) {
+                    Log.d("testo", "error, possibly no internet")
+                    currencyUiState.value = CurrencyUiState.Error
                 }
-                delay(1000L)
             }
         }
     }
 
     fun onTextChanged(changedMultiplier: Double) {
-//        view.updateRates(changedMultiplier)
+        modifierUiState.value = changedMultiplier
     }
 
     fun onItemMoved(itemOnTop: RateDto) {
-//        subscriptions.clear()
+        job?.cancel()
 
         retrieveCurrencyResponse(itemOnTop.key)
     }
 
     fun restartSubscription() {
-//        if (subscriptions.size() == 0) {
+        Log.d("testo", "restarting...")
+        if (job == null || job?.isActive != true) {
             retrieveCurrencyResponse(repository.getBaseCurrency())
-//        }
+        }
     }
 
-    //progress bar, as request usually takes more than REQUEST_INTERVAL.
-    fun retry() {
-        val currency = repository.getBaseCurrency()
-
-        currencyUiState = CurrencyUiState.Loading
-
-//        val disposable = repository.getCurrencyResponse(currency)
-//            .applyDefaultIOSchedulers()
-//            .repeatWhen { completed ->
-//                completed.delay(
-//                    Constants.REQUEST_INTERVAL,
-//                    TimeUnit.SECONDS
-//                )
-//            }
-//            .subscribe(
-//                { response ->
-//                    currencyUiState = CurrencyUiState.Success(response)
-//                },
-//                { throwable ->
-//                    currencyUiState = CurrencyUiState.Error
-//                }
-//            )
-//
-//        subscriptions.add(disposable)
+    fun clearSubscriptions() {
+        viewModelScope.launch {
+            job?.cancelAndJoin()
+        }
     }
 }
 

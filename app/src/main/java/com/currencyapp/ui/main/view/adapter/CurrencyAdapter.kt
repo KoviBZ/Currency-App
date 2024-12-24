@@ -18,6 +18,8 @@ import com.currencyapp.utils.Constants
 import com.currencyapp.utils.callback.ItemMovedCallback
 import com.currencyapp.utils.callback.TextChangedCallback
 import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.Locale
 
 const val MULTIPLIER_FOR_OFFLINE = 1.0
 
@@ -104,7 +106,9 @@ class CurrencyAdapter(
 
                     (currencyValueEditText.isFocused).let {
                         multiplier = if (changedString.isNotEmpty() && changedString != Constants.SEPARATOR) {
-                            changedString.toDouble()
+                            val format = NumberFormat.getInstance(Locale.getDefault())
+                            val number = format.parse(changedString) ?: 0.0
+                            number.toDouble()
                         } else {
                             0.0
                         }

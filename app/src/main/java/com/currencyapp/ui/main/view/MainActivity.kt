@@ -5,8 +5,8 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.currencyapp.R
@@ -16,12 +16,14 @@ import com.currencyapp.ui.main.presenter.MainViewModel
 import com.currencyapp.ui.main.view.adapter.CurrencyAdapter
 import com.currencyapp.utils.callback.ItemMovedCallback
 import com.currencyapp.utils.callback.TextChangedCallback
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity: AppCompatActivity(),
     TextChangedCallback,
     ItemMovedCallback
 {
-    val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModel<MainViewModel>()
 
     private val errorContainer: LinearLayout by lazy { findViewById(R.id.retry_container) }
     private val errorButton: Button by lazy { findViewById(R.id.retry_button) }
@@ -43,17 +45,24 @@ class MainActivity: AppCompatActivity(),
         recyclerView.adapter = this.adapter
 
         errorButton.setOnClickListener {
-            viewModel.retry()
+            viewModel.restartSubscription()
             it.isEnabled = false
         }
 
-        viewModel.retrieveCurrencyResponse()
+        lifecycleScope.launch {
+            viewModel.currencyUiState.collect { state ->
+                when (state) {
+                    is CurrencyUiState.Loading -> progressBar.visibility = View.VISIBLE
+                    is CurrencyUiState.Success -> onDataLoadedSuccess(state.currencies)
+                    is CurrencyUiState.Error -> onDataLoadedFailure()
+                }
+            }
+        }
 
-        val state = viewModel.currencyUiState
-        when (state) {
-            is CurrencyUiState.Loading -> progressBar.visibility = View.VISIBLE
-            is CurrencyUiState.Success -> onDataLoadedSuccess(state.currencies)
-            is CurrencyUiState.Error -> onDataLoadedFailure()
+        lifecycleScope.launch {
+            viewModel.modifierUiState.collect {
+                updateRates(it)
+            }
         }
     }
 
@@ -63,26 +72,24 @@ class MainActivity: AppCompatActivity(),
     }
 
     override fun onStop() {
-//        viewModel.clearSubscriptions()
+        viewModel.clearSubscriptions()
         super.onStop()
     }
 
-    override fun onDestroy() {
-//        viewModel.detachView()
-        super.onDestroy()
-    }
-
-    fun onDataLoadedSuccess(currencyList: List<RateDto>) {
+    private fun onDataLoadedSuccess(currencyList: List<RateDto>) {
         errorContainer.visibility = View.GONE
+        progressBar.visibility = View.GONE
         (recyclerView.adapter as CurrencyAdapter).setItemsList(currencyList as ArrayList<RateDto>)
     }
 
-    fun onDataLoadedFailure() {
+    private fun onDataLoadedFailure() {
+        viewModel.clearSubscriptions()
         errorButton.isEnabled = true
+        progressBar.visibility = View.GONE
         errorContainer.visibility = View.VISIBLE
     }
 
-    fun updateRates(changedMultiplier: Double) {
+    private fun updateRates(changedMultiplier: Double) {
         this.adapter.updateRates(changedMultiplier)
     }
 

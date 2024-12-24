@@ -4,5 +4,5 @@ import com.currencyapp.network.entity.RateDto
 
 interface RemoteRepository {
     fun getBaseCurrency(): String
-    fun getCurrencyResponse(currencyName: String): Resource<List<RateDto>>
+    suspend fun getCurrencyResponse(currencyName: String): Resource<List<RateDto>>
 }
